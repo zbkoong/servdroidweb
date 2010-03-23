@@ -1,8 +1,8 @@
 #labels Phase-Design
 Screen Shots of ServDroid
 
-[http://servdroidweb.googlecode.com/svn/trunk/wiki/main_screen.png]
+|| The main screen ||The log Viewer ||
+||[http://servdroidweb.googlecode.com/svn/trunk/wiki/main_screen.png]||[http://servdroidweb.googlecode.com/svn/trunk/wiki/log_viewer.png]||
 
-[http://servdroidweb.googlecode.com/svn/trunk/wiki/log_viewer.png]
-
-[http://servdroidweb.googlecode.com/svn/trunk/wiki/preferences.png]
+||Some preferences||
+||[http://servdroidweb.googlecode.com/svn/trunk/wiki/preferences.png]||
