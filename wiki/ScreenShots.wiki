@@ -1,5 +1,5 @@
 #labels Phase-Design
-Screen Shots of ServDroid
+Screen Shots of ServDroid.web
 
 || The main screen ||The log Viewer ||
 ||[http://servdroidweb.googlecode.com/svn/trunk/wiki/main_screen.png]||[http://servdroidweb.googlecode.com/svn/trunk/wiki/log_viewer.png]||
