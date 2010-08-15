@@ -156,8 +156,7 @@
 	</string>
 
 	<string name="directory_indexing">Directory Indexing</string>
-	<string name="server_directory_indexing">Enable directory indexing if index.html doesn't exist
-    </string>
+	<string name="server_directory_indexing">Enable directory indexing if index.html doesn\'t exist</string>
 	<string name="directory_indexing_get_template">Get template for directory Indexing</string>
 	<string name="server_directory_indexing_get_template">Download and install a template for directory indexing</string>
 	<string name="directory_indexing_question">Are you sure you want to download and install a template package for directory indexing? (recommended) \n\nIt will overwrite existing files.</string>
@@ -190,7 +189,7 @@
 		version
 	</string>
 	<string name="donate">Donate</string>
-	<string name="donate_info">If you like ServDroid.Web, it would be nice if you could support me with a donation.\n\nYou can do this with an arbitrary amount via PayPal or with a donate application in Market with €1 or €2 (those applications don't do anything, they are just for donating.\n\nThank you!</string>
+	<string name="donate_info">If you like ServDroid.Web, it would be nice if you could support me with a donation.\n\nYou can do this with an arbitrary amount via PayPal or with a donate application in Market with €1 or €2 (those applications don\'t do anything, they are just for donating.\n\nThank you!</string>
 
 
 
