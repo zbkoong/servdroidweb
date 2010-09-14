@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<!--
+		Copyright (C) 2010 Joan Puig Sanz Licensed under the Apache License,
+		Version 2.0 (the "License"); you may not use this file except in
+		compliance with the License. You may obtain a copy of the License at
+
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:persistent="true">
+
+	<PreferenceCategory android:title="@string/title_server_settings">
+
+		<EditTextPreference android:dialogTitle="@string/settings_port"
+			android:dialogMessage="@string/chose_port" android:key="@string/pref_port_key"
+			android:title="@string/settings_port" android:summary="@string/server_port"
+			android:defaultValue="@string/default_port" android:inputType="numberDecimal" />
+
+		<EditTextPreference android:dialogTitle="@string/settings_max_clients"
+			android:dialogMessage="@string/chose_max_clients" android:key="@string/pref_max_clients_key"
+			android:title="@string/settings_max_clients" android:summary="@string/server_max_clients"
+			android:defaultValue="@string/default_max_clients" android:inputType="numberDecimal" />
+
+		<EditTextPreference android:dialogTitle="@string/settings_www_path"
+			android:dialogMessage="@string/chose_www_path" android:key="@string/pref_www_path_key"
+			android:title="@string/settings_www_path" android:defaultValue="@string/default_www_path"
+			android:summary="@string/server_www_path" />
+
+		<EditTextPreference android:dialogTitle="@string/settings_error_path"
+			android:dialogMessage="@string/chose_error_path" android:key="@string/pref_error_path_key"
+			android:title="@string/settings_error_path" android:defaultValue="@string/default_error_path"
+			android:summary="@string/server_error_path" />
+
+		<EditTextPreference android:dialogTitle="@string/settings_log_path"
+			android:dialogMessage="@string/chose_log_path" android:key="@string/pref_log_path_key"
+			android:title="@string/settings_log_path" android:defaultValue="@string/default_log_path"
+			android:summary="@string/server_log_path" />
+
+		<CheckBoxPreference android:key="@string/pref_vibrate_key"
+			android:title="@string/vibrate" android:defaultValue="@string/default_vibrate"
+			android:summary="@string/server_vibrate" />
+
+		<PreferenceScreen android:title="@string/directory_indexing">
+
+			<CheckBoxPreference android:key="@string/pref_directory_indexing_key"
+				android:title="@string/directory_indexing" android:defaultValue="@string/default_directory_indexing"
+				android:summary="@string/server_directory_indexing" />
+
+			<Preference android:title="@string/directory_indexing_get_template"
+				android:summary="@string/server_directory_indexing_get_template"
+				android:dependency="@string/pref_directory_indexing_key" android:key="@string/pref_directory_indexing_get_template_key" />
+
+		</PreferenceScreen>
+
+
+
+
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/title_log_settings">
+
+		<ListPreference android:title="@string/show_entries"
+			android:summary="@string/log_entries" android:key="@string/pref_log_entries_key"
+			android:defaultValue="@string/default_log_entries" android:entries="@array/show_log_entries"
+			android:entryValues="@array/show_log_entries" />
+
+
+
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/title_other_settings">
+
+		<Preference android:title="@string/reset_configurations"
+			android:summary="@string/other_reset" android:key="@string/pref_reset_config_key" />
+
+
+		<Preference android:title="@string/about" android:summary="@string/other_about"
+			android:key="@string/pref_about_key" />
+
+		<Preference android:title="@string/release_notes"
+			android:key="@string/pref_release_notes_key" />
+
+
+	</PreferenceCategory>
+
+</PreferenceScreen>
