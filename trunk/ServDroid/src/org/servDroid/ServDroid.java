@@ -17,7 +17,6 @@
 package org.servDroid;
 
 import java.io.IOException;
-
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
@@ -51,17 +50,17 @@ import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
  * This is the main class.
@@ -72,7 +71,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 public class ServDroid extends ListActivity {
 
 	public static final String TAG = "ServDroid";
-	
 
 	// private static final int ACTIVITY_CREATE = 0;
 	private static final int ACTIVITY_EDIT = 1;
@@ -281,7 +279,8 @@ public class ServDroid extends ListActivity {
 		if (!version.equals(getResources().getString(R.string.version))) {
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage(R.string.release_notes_info).setCancelable(true)
+			builder.setMessage(R.string.release_notes_info)
+					.setCancelable(true)
 					.setNeutralButton(android.R.string.ok,
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
@@ -332,18 +331,21 @@ public class ServDroid extends ListActivity {
 						+ getResources().getString(R.string.info_dialog_6)
 						+ "\n\n"
 						+ getResources().getString(R.string.info_dialog_7))
-				.setCancelable(true).setPositiveButton(R.string.web_page,
+				.setCancelable(true)
+				.setPositiveButton(R.string.web_page,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								openWebBrowser("http://code.google.com/p/servdroidweb/");
 							}
-						}).setNegativeButton(R.string.donate,
+						})
+				.setNegativeButton(R.string.donate,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 
 								donateDialog();
 							}
-						}).setNeutralButton(android.R.string.ok,
+						})
+				.setNeutralButton(android.R.string.ok,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 
@@ -358,13 +360,15 @@ public class ServDroid extends ListActivity {
 
 	private void donateDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.donate_info).setCancelable(true)
+		builder.setMessage(R.string.donate_info)
+				.setCancelable(true)
 				.setNeutralButton("PayPal",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								openWebBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GS8EPVN7QZTAN&lc=ES&item_name=ServDroid%2eweb&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted");
 							}
-						}).setPositiveButton("Market",
+						})
+				.setPositiveButton("Market",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								openWebBrowser("market://search?q=ServDroid.web donate");
@@ -609,7 +613,9 @@ public class ServDroid extends ListActivity {
 			}
 		}
 		try {
-			mServerSocket.close();
+			if (mServerSocket != null) {
+				mServerSocket.close();
+			}
 		} catch (IOException e) {
 			Log.e(TAG, "ERROR clossing socket", e);
 		}
@@ -761,8 +767,8 @@ public class ServDroid extends ListActivity {
 	private boolean getVibrate() {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		return pref.getBoolean(getResources().getString(
-				R.string.pref_vibrate_key), false);
+		return pref.getBoolean(
+				getResources().getString(R.string.pref_vibrate_key), false);
 
 	}
 
@@ -774,8 +780,9 @@ public class ServDroid extends ListActivity {
 	private boolean getFileIndexingEnabled() {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		return pref.getBoolean(getResources().getString(
-				R.string.pref_directory_indexing_key), true);
+		return pref.getBoolean(
+				getResources().getString(R.string.pref_directory_indexing_key),
+				true);
 	}
 
 	/**
@@ -786,9 +793,9 @@ public class ServDroid extends ListActivity {
 	private int getPort() {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		String port = pref.getString(getResources().getString(
-				R.string.pref_port_key), getResources().getString(
-				R.string.default_port));
+		String port = pref.getString(
+				getResources().getString(R.string.pref_port_key),
+				getResources().getString(R.string.default_port));
 
 		try {
 			return Integer.parseInt(port);
@@ -806,9 +813,9 @@ public class ServDroid extends ListActivity {
 	private int getMaxClients() {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		String max = pref.getString(getResources().getString(
-				R.string.pref_max_clients_key), getResources().getString(
-				R.string.default_max_clients));
+		String max = pref.getString(
+				getResources().getString(R.string.pref_max_clients_key),
+				getResources().getString(R.string.default_max_clients));
 
 		try {
 			return Integer.parseInt(max);
@@ -826,9 +833,9 @@ public class ServDroid extends ListActivity {
 	private String getWwwPath() {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		return pref.getString(getResources().getString(
-				R.string.pref_www_path_key), getResources().getString(
-				R.string.default_www_path));
+		return pref.getString(
+				getResources().getString(R.string.pref_www_path_key),
+				getResources().getString(R.string.default_www_path));
 	}
 
 	/**
@@ -841,9 +848,9 @@ public class ServDroid extends ListActivity {
 	private String getErrorPath() {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		return pref.getString(getResources().getString(
-				R.string.pref_error_path_key), getResources().getString(
-				R.string.default_error_path));
+		return pref.getString(
+				getResources().getString(R.string.pref_error_path_key),
+				getResources().getString(R.string.default_error_path));
 
 	}
 }
