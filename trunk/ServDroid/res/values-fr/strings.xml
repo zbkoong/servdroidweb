@@ -143,7 +143,7 @@
 	<string name="about_servdroid.web">ServDroid.Web a été programmé par Joan Puig Sanz.
 		\n\nVous trouverez plus d\'informations dans	http://code.google.com/p/servdroidweb/
 		\n\nSi vous avez aimé ce logiciel, s\'il vous plaît pensez à faire un don.
-		\n\nUn merci spécial pour les traductions à Steve Watts, Kim Del Rio, Asgeir Oskarsson et Enrico Orsini.
+		\n\nUn merci spécial pour les traductions à Steve Watts, Kim Del Rio, Asgeir Oskarsson, Enrico Orsini et Jan Dunkerbeck.
 
     </string>
 
@@ -184,7 +184,7 @@
 	<string name="release_notes">Notes de publication</string>
 
 	<string name="release_notes_info">
-		Modifications:\n\n-0.1.3 l´interface est améliorée,	\"l\'indexation des répertoires\" ajouté, nombre d\'entrées affichées	dans le registre à personnaliser (voir les préférences), nouvelles langues (italien, français et néerlandais),quelques bugs corrigés
+		Modifications:\n\n-0.1.4 Linterface web est ameliorée et des bugs mineurs sont fixés \n-0.1.3 l´interface est améliorée,	\"l\'indexation des répertoires\" ajouté, nombre d\'entrées affichées	dans le registre à personnaliser (voir les préférences), nouvelles langues (italien, français et néerlandais),quelques bugs corrigés
 		\n-0.1.2 Corrections d\'erreurs\n-0.1.1 Première version\n-0.1 Version d\'essai
     </string>
 	<string name="donate">Donner</string>

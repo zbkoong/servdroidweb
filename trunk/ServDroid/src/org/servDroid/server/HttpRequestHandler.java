@@ -23,18 +23,28 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.security.MessageDigest;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.servDroid.db.LogAdapter;
 
+import android.text.format.DateFormat;
 import android.util.Log;
 
 /**
  * 
- * @author Joan Puig Sanz
+ * @author Joan Puig Sanz and Jan Dunkerbeck
  * 
  */
 public class HttpRequestHandler implements Runnable {
+	
+	private static final String HTTP_HEADER_IF_MODIFIED = "If-Modified-Since:";
+
+	// Date Format pattern for HTTP headers
+	private static final String HTTP_DATE_FORMAT = "EEE, dd MMMMM yyyyy hh:mm:ss zzzz";
+
 	private static final String TAG = "ServDroid";
 
 	final static String CRLF = "\r\n";
@@ -48,6 +58,26 @@ public class HttpRequestHandler implements Runnable {
 	private String mWwwPath, mErrorPath;
 
 	private Boolean mFileIndexing;
+
+	// After how many minutes a page will expire in the browser cache
+	// TODO: Configuration?
+	private int expires = 60;
+
+	private static Map<String,String> mimeTypes;
+	
+	static {
+		// Maybe there is a /etc/mime-types available?
+		mimeTypes = new HashMap<String, String>();
+		mimeTypes.put("htm","text/html");
+		mimeTypes.put("css","text/css");
+		mimeTypes.put("html","text/html");
+		mimeTypes.put("xhtml","text/xhtml");
+		mimeTypes.put("txt","text/html");
+		mimeTypes.put("pdf","application/pdf");
+		mimeTypes.put("jpg","image/jpeg");
+		mimeTypes.put("gif","image/gif");
+		mimeTypes.put("png","image/png");
+	}
 
 	public HttpRequestHandler(Socket socket, String wwwPath, String errorPath,
 			LogAdapter logAdapter, boolean fileIndexing) throws Exception {
@@ -78,23 +108,36 @@ public class HttpRequestHandler implements Runnable {
 	 * @throws Exception
 	 */
 	private void processRequest() throws Exception {
-		while (true) {
 
-			String headerLine = mBr.readLine();
-			// Log.d(TAG, "Header line: " + headerLine);
-			if (headerLine.equals(CRLF) || headerLine.equals("")) {
-				break;
+		try {
+			
+			String httpRequest = mBr.readLine();
+	
+			StringTokenizer s = new StringTokenizer(httpRequest);
+			String httpCommand = s.nextToken();
+			String fileGet = s.nextToken();
+			String fileName = mWwwPath + fileGet;
+	
+			Map<String,String> requestHeader = new HashMap<String, String>();
+			
+			// Analyze following HTTP-Headers
+			while (true) {
+	
+				String headerLine = mBr.readLine();
+				
+				if (headerLine.equals(CRLF) || headerLine.equals("")) {
+					break;
+				}
+				
+				int idx =  headerLine.indexOf(" ");
+				if	( idx >= 1 ) 
+					requestHeader.put(headerLine.substring(0,idx),headerLine.substring(idx+1));
+				
+				//Log.d(TAG, "Header line: " + headerLine);
 			}
 
-			StringTokenizer s = new StringTokenizer(headerLine);
-			String temp = s.nextToken();
 
-			if (temp.equals("GET")) {
-
-				String fileGet = s.nextToken();
-				String fileName;
-
-				fileName = mWwwPath + fileGet;
+			if (httpCommand.equals("GET")) {
 
 				File file = new File(fileName);
 
@@ -130,19 +173,45 @@ public class HttpRequestHandler implements Runnable {
 					fis = new FileInputStream(file);
 				}
 
-				String serverLine = "ServDroid server";
+				String serverLine = "Server: ServDroid server" + CRLF;
 				String statusLine = null;
 				String contentTypeLine = null;
 				String entityBody = null;
-				String contentLengthLine = "error";
+				String contentLengthLine = null;
+				String lastModifiedLine = null;
+				String expiresLine = null;
+				boolean notModified = false;
+				
 				if (fileExists) {
-					statusLine = "HTTP/1.0 200 OK" + CRLF;
-					contentTypeLine = "Content-type: " + contentType(fileName)
-							+ CRLF;
-					contentLengthLine = "Content-Length: "
+					String lastModified = DateFormat.format(HTTP_DATE_FORMAT,file.lastModified()).toString();
+					lastModifiedLine = "Last-Modified: " + lastModified + CRLF;
+					MessageDigest.getInstance("MD5");
+					
+					if	( requestHeader.containsKey(HTTP_HEADER_IF_MODIFIED) ) {
+						if	( requestHeader.get(HTTP_HEADER_IF_MODIFIED).equals(lastModified)) {
+							
+							notModified = true;
+							statusLine = "HTTP/1.0 304 Not Modified" + CRLF;
+							contentLengthLine = "Content-Length: 0" + CRLF;
+						}
+					}
+					
+					if	( !notModified)
+					{
+						statusLine = "HTTP/1.0 200 OK" + CRLF;
+						contentTypeLine = "Content-type: " + contentType(file.getName())
+						+ CRLF;
+						contentLengthLine = "Content-Length: "
 							+ (new Integer(fis.available())).toString() + CRLF;
+						
+						if	( this.expires > 0) {
+							expiresLine = "Expires: " + DateFormat.format(HTTP_DATE_FORMAT,System.currentTimeMillis()+(expires*60*1000)) + CRLF;
+						}
+					}
+					
 					mLogAdapter.addLog(("" + mSocket.getInetAddress()).replace(
 							"/", ""), "GET " + fileGet, "", "");
+					
 				} else if (isDirectory && !fileExists && mFileIndexing) { // Indexing
 
 					statusLine = "HTTP/1.0 200 OK" + CRLF;
@@ -191,17 +260,24 @@ public class HttpRequestHandler implements Runnable {
 
 				// Send the status line.
 				mOutput.write(statusLine.getBytes());
-				// Log.d(TAG, "Status line: " + statusLine);
 
 				// Send the server line.
 				mOutput.write(serverLine.getBytes());
-				// Log.d(TAG, "Server line: " + serverLine);
 
+				if	( lastModifiedLine != null )
+					mOutput.write( lastModifiedLine.getBytes() );
+				
+				if	( expiresLine != null )
+					mOutput.write( expiresLine.getBytes() );
+				
 				// Send the content type line.
-				mOutput.write(contentTypeLine.getBytes());
-				// Log.d(TAG, "Content type: " + contentTypeLine);
+				if	( contentTypeLine != null )
+					mOutput.write(contentTypeLine.getBytes());
 
 				// Send the entity body.
+				if (notModified) {
+					// do nothing, the body is empty. The browser will now use its own cache.
+				}
 				if (fileExists) {
 					// Send the Content-Length
 					mOutput.write(contentLengthLine.getBytes());
@@ -225,14 +301,80 @@ public class HttpRequestHandler implements Runnable {
 
 					mOutput.write(entityBody.getBytes());
 				}
-			}
-		}
+			} else {
+				
 
+				String statusLine = "HTTP/1.0 400 Bad Request" + CRLF;
+				String contentTypeLine = "Content-type: text/html" + CRLF;
+				String entityBody = "<HTML>"
+						+ "<HEAD><title>Bad Request</title>"
+						+ "</head><body> <div style=\"text-align: center;\">"
+						+ "<big><big><big><span style=\"font-weight: bold;\">"
+						+ "<br>ERROR 400: Bad request<br></span></big></big></big></div>"
+						+ "</BODY></HTML>";
+				String contentLengthLine = "Content-Length: "
+						+ (entityBody.getBytes().length) + CRLF;
+				
+				// Send the status line.
+				mOutput.write(statusLine.getBytes());
+				mOutput.write(contentLengthLine.getBytes());
+	
+				// Send the content type line.
+				mOutput.write(contentTypeLine.getBytes());
+				
+				// Send a blank line to indicate the end of the header
+				// lines.
+				mOutput.write(CRLF.getBytes());
+				
+				mOutput.write(entityBody.getBytes());
+				
+				mLogAdapter.addLog("", "",
+						"ERROR 400 bad request", "Unkown Command: "+httpCommand);
+			}
+
+
+		} catch (Exception e) {
+			Log.w(TAG, "Internal Server error",e);
+			String statusLine = "HTTP/1.0 500 Internal Server Error" + CRLF;
+			String contentTypeLine = "Content-type: text/html" + CRLF;
+			String entityBody = "<HTML>"
+					+ "<HEAD><title>Internal Server Error</title>"
+					+ "</head><body> <div style=\"text-align: center;\">"
+					+ "<big><big><big><span style=\"font-weight: bold;\">"
+					+ "<br>ERROR 500: Internal Server Error<br></span></big></big></big></div>"
+					+ "</BODY></HTML>";
+			String contentLengthLine = "Content-Length: "
+					+ (entityBody.getBytes().length) + CRLF;
+			
+			// Send the status line.
+			mOutput.write(statusLine.getBytes());
+			mOutput.write(contentLengthLine.getBytes());
+
+			// Send the content type line.
+			mOutput.write(contentTypeLine.getBytes());
+			// Log.d(TAG, "Content type: " + contentTypeLine);
+
+			// Log.d(TAG, "Content line: " + contentLengthLine);
+			
+			// Send a blank line to indicate the end of the header
+			// lines.
+			mOutput.write(CRLF.getBytes());
+			
+			mOutput.write(entityBody.getBytes());
+			
+			mLogAdapter.addLog("", "",
+					"ERROR 503 internal server error", e.getMessage());
+			Log.w(TAG, "Internal Server Error", e);
+		}
+		
 		try {
+			
 			mOutput.close();
 			mBr.close();
 			mSocket.close();
-		} catch (Exception e) {
+		}
+		catch(Exception e ) {
+			
 			Log.e(TAG, "ERROR closing socket", e);
 		}
 	}
@@ -265,17 +407,18 @@ public class HttpRequestHandler implements Runnable {
 	 * @return Content type
 	 */
 	private String contentType(String fileName) {
-		if (fileName.endsWith(".htm") || fileName.endsWith(".html")
-				|| fileName.endsWith(".txt")) {
-			return "text/html";
-		} else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
-			return "image/jpeg";
-		} else if (fileName.endsWith(".gif")) {
-			return "image/gif";
-		} else if (fileName.endsWith(".png")) {
-			return "image/png";
-		} else {
-			return "application/octet-stream";
+		
+		String ext = "";
+		int idx = fileName.lastIndexOf(".");
+		if	( idx >= 0 )
+		{
+			ext = fileName.substring(idx+1);
 		}
+		
+		if	( mimeTypes.containsKey(ext) )
+			return mimeTypes.get(ext);
+		else
+			return "application/octet-stream";
+		
 	}
 }

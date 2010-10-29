@@ -74,11 +74,17 @@ public class ManagePreferences extends PreferenceActivity {
 	private ProgressDialog mProgressDialog;
 
 	private SharedPreferences mPreferences;
+	
+	private boolean mError = false;
 
 	// Handler for the progress bar
 	final Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
+			
+			if (mError== true){
+				return;
+			}
 			int max = msg.getData().getInt("max");
 			int total = msg.getData().getInt("counter");
 			int message = msg.getData().getInt("message");
@@ -99,8 +105,9 @@ public class ManagePreferences extends PreferenceActivity {
 			}
 
 			mProgressDialog.setProgress(total);
-			if (total == -2) {
+			if (total == -2) { //ERROR downloading template
 				mProgressDialog.dismiss();
+				mError = true;
 				showErrorDownloadMessage();
 			} else if (total == -1) {
 				mProgressDialog.dismiss();
@@ -494,11 +501,14 @@ public class ManagePreferences extends PreferenceActivity {
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						openWebBrowser();
+						mError = false;
 					}
 				}).setIcon(R.drawable.icon).setNegativeButton(
 				android.R.string.no, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						dialog.cancel();
+						mError = false;
+
 					}
 				});
 
