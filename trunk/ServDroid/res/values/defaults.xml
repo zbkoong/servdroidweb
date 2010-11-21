@@ -19,6 +19,7 @@
 	<string name="default_min_length_password">4</string>
 	<string name="default_max_clients">10</string>
 	<string name="default_log_entries">35</string>
+	<string name="default_expiration_cache">60</string>
 	<string name="default_vibrate">false</string>
 	<string name="default_directory_indexing">true</string>
 	<string name="default_www_path">/sdcard/servdroid/var/www/</string>

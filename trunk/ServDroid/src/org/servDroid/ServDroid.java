@@ -699,7 +699,8 @@ public class ServDroid extends ListActivity {
 
 				try {
 					HttpRequestHandler request = new HttpRequestHandler(socket,
-							mWwwPath, mErrorPath, mLogAdapter, mFileIndexing);
+							mWwwPath, mErrorPath, mLogAdapter, mFileIndexing,
+							getExpirationCacheTime());
 					Thread thread = new Thread(request);
 
 					thread.start();
@@ -783,6 +784,26 @@ public class ServDroid extends ListActivity {
 		return pref.getBoolean(
 				getResources().getString(R.string.pref_directory_indexing_key),
 				true);
+	}
+
+	/**
+	 * Get server expiration cache for the browsers through SharedPreferences
+	 * 
+	 * @return the time in minutes
+	 */
+	private int getExpirationCacheTime() {
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		String expirationCache = pref.getString(
+				getResources().getString(R.string.pref_expiration_cache_key),
+				getResources().getString(R.string.default_expiration_cache));
+
+		try {
+			return Integer.parseInt(expirationCache);
+		} catch (NumberFormatException e) {
+			return 60;
+		}
+
 	}
 
 	/**

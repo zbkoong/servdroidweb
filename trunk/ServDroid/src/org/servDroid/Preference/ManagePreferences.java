@@ -63,6 +63,7 @@ public class ManagePreferences extends PreferenceActivity {
 	private EditTextPreference mPreferenceWwwPath;
 	private EditTextPreference mPreferenceErrorPath;
 	private EditTextPreference mPreferenceLogPath;
+	private EditTextPreference mPreferenceExpirationCache;
 	private CheckBoxPreference mPreferenceVibrate;
 	private CheckBoxPreference mPreferenceFileIndexing;
 	private ListPreference mPreferenceLogEntries;
@@ -74,15 +75,15 @@ public class ManagePreferences extends PreferenceActivity {
 	private ProgressDialog mProgressDialog;
 
 	private SharedPreferences mPreferences;
-	
+
 	private boolean mError = false;
 
 	// Handler for the progress bar
 	final Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			
-			if (mError== true){
+
+			if (mError == true) {
 				return;
 			}
 			int max = msg.getData().getInt("max");
@@ -105,7 +106,7 @@ public class ManagePreferences extends PreferenceActivity {
 			}
 
 			mProgressDialog.setProgress(total);
-			if (total == -2) { //ERROR downloading template
+			if (total == -2) { // ERROR downloading template
 				mProgressDialog.dismiss();
 				mError = true;
 				showErrorDownloadMessage();
@@ -130,6 +131,8 @@ public class ManagePreferences extends PreferenceActivity {
 
 		mPreferenceMaxClients = (EditTextPreference) findPreference(getResources()
 				.getString(R.string.pref_max_clients_key));
+		mPreferenceExpirationCache = (EditTextPreference) findPreference(getResources()
+				.getString(R.string.pref_expiration_cache_key));
 
 		mPreferenceWwwPath = (EditTextPreference) findPreference(getResources()
 				.getString(R.string.pref_www_path_key));
@@ -183,6 +186,23 @@ public class ManagePreferences extends PreferenceActivity {
 
 		// Check the max clients
 		mPreferenceMaxClients
+				.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+
+					public boolean onPreferenceChange(Preference preference,
+							Object newValue) {
+
+						try {
+							Integer.parseInt((String) newValue);
+
+						} catch (NumberFormatException e) {
+							return false;
+						}
+
+						return true;
+					}
+				});
+
+		mPreferenceExpirationCache
 				.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
 					public boolean onPreferenceChange(Preference preference,
@@ -306,13 +326,12 @@ public class ManagePreferences extends PreferenceActivity {
 						// Create file
 						FileWriter fstream = new FileWriter(file);
 						BufferedWriter out = new BufferedWriter(fstream);
-						out
-								.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
-										+ "<html><head><meta content=\"text/html; charset=UTF8\" http-equiv=\"content-type\"><title>Hello</title></head><body>"
-										+ "<div style=\"text-align: center;\"><big><big><big><span style=\"font-weight: bold;\">ServDroid:<br>"
-										+ "It works!<br>"
-										+ "</span></big></big></big></div>"
-										+ "</body></html>");
+						out.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
+								+ "<html><head><meta content=\"text/html; charset=UTF8\" http-equiv=\"content-type\"><title>Hello</title></head><body>"
+								+ "<div style=\"text-align: center;\"><big><big><big><span style=\"font-weight: bold;\">ServDroid:<br>"
+								+ "It works!<br>"
+								+ "</span></big></big></big></div>"
+								+ "</body></html>");
 						// Close the output stream
 						out.close();
 					} catch (Exception e) {
@@ -395,13 +414,12 @@ public class ManagePreferences extends PreferenceActivity {
 						// Create file
 						FileWriter fstream = new FileWriter(file);
 						BufferedWriter out = new BufferedWriter(fstream);
-						out
-								.write("<HTML>"
-										+ "<HEAD><title>404 Not Found</title>"
-										+ "</head><body> <div style=\"text-align: center;\">"
-										+ "<big><big><big><span style=\"font-weight: bold;\">"
-										+ "<br>ERROR 404: Document not Found<br></span></big></big></big></div>"
-										+ "</BODY></HTML>");
+						out.write("<HTML>"
+								+ "<HEAD><title>404 Not Found</title>"
+								+ "</head><body> <div style=\"text-align: center;\">"
+								+ "<big><big><big><span style=\"font-weight: bold;\">"
+								+ "<br>ERROR 404: Document not Found<br></span></big></big></big></div>"
+								+ "</BODY></HTML>");
 						// Close the output stream
 						out.close();
 					} catch (Exception e) {
@@ -429,9 +447,9 @@ public class ManagePreferences extends PreferenceActivity {
 	private String getWwwPath() {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(this);
-		return pref.getString(getResources().getString(
-				R.string.pref_www_path_key), getResources().getString(
-				R.string.default_www_path));
+		return pref.getString(
+				getResources().getString(R.string.pref_www_path_key),
+				getResources().getString(R.string.default_www_path));
 	}
 
 	/**
@@ -440,9 +458,11 @@ public class ManagePreferences extends PreferenceActivity {
 	private void showDownloadTemplateDialog() {
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.directory_indexing_question).setTitle(
-				R.string.directory_indexing).setIcon(R.drawable.icon)
-				.setCancelable(false).setPositiveButton(android.R.string.yes,
+		builder.setMessage(R.string.directory_indexing_question)
+				.setTitle(R.string.directory_indexing)
+				.setIcon(R.drawable.icon)
+				.setCancelable(false)
+				.setPositiveButton(android.R.string.yes,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 
@@ -469,7 +489,8 @@ public class ManagePreferences extends PreferenceActivity {
 								progressThread.start();
 
 							}
-						}).setNegativeButton(android.R.string.no,
+						})
+				.setNegativeButton(android.R.string.no,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								dialog.cancel();
@@ -503,14 +524,16 @@ public class ManagePreferences extends PreferenceActivity {
 						openWebBrowser();
 						mError = false;
 					}
-				}).setIcon(R.drawable.icon).setNegativeButton(
-				android.R.string.no, new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-						mError = false;
+				})
+				.setIcon(R.drawable.icon)
+				.setNegativeButton(android.R.string.no,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+								mError = false;
 
-					}
-				});
+							}
+						});
 
 		ab.show();
 	}
@@ -641,8 +664,8 @@ public class ManagePreferences extends PreferenceActivity {
 					public void onClick(DialogInterface dialog, int id) {
 						donateDialog();
 					}
-				}).setNegativeButton(android.R.string.ok, null).setIcon(
-				R.drawable.icon);
+				}).setNegativeButton(android.R.string.ok, null)
+				.setIcon(R.drawable.icon);
 
 		ab.show();
 
@@ -650,13 +673,15 @@ public class ManagePreferences extends PreferenceActivity {
 
 	private void donateDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.donate_info).setCancelable(true)
+		builder.setMessage(R.string.donate_info)
+				.setCancelable(true)
 				.setNeutralButton("PayPal",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								openWebBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GS8EPVN7QZTAN&lc=ES&item_name=ServDroid%2eweb&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted");
 							}
-						}).setPositiveButton("Market",
+						})
+				.setPositiveButton("Market",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								openWebBrowser("market://search?q=ServDroid.web donate");
@@ -684,27 +709,30 @@ public class ManagePreferences extends PreferenceActivity {
 	private void showResetDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(R.string.reset_configurations_message)
-				.setCancelable(false).setPositiveButton(android.R.string.yes,
+				.setCancelable(false)
+				.setPositiveButton(android.R.string.yes,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 
 								restorePreferences();
 
 							}
-						}).setNegativeButton(android.R.string.no,
+						})
+				.setNegativeButton(android.R.string.no,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								dialog.cancel();
 							}
-						}).setTitle(R.string.other_reset).setIcon(
-						android.R.drawable.ic_dialog_alert);
+						}).setTitle(R.string.other_reset)
+				.setIcon(android.R.drawable.ic_dialog_alert);
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
 
 	private void showReleaseNotesDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(R.string.release_notes_info).setCancelable(true)
+		builder.setMessage(R.string.release_notes_info)
+				.setCancelable(true)
 				.setNeutralButton(android.R.string.ok,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
@@ -737,6 +765,8 @@ public class ManagePreferences extends PreferenceActivity {
 		checkLogPath(getResources().getString(R.string.default_log_path));
 		mPreferenceMaxClients.setText(getResources().getString(
 				R.string.default_max_clients));
+		mPreferenceExpirationCache.setText(getResources().getString(
+				R.string.default_expiration_cache));
 		mPreferenceVibrate.setChecked(false);
 		mPreferenceFileIndexing.setChecked(true);
 		mPreferenceLogEntries.setValue(getResources().getString(

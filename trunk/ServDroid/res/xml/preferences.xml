@@ -40,6 +40,12 @@
 			android:dialogMessage="@string/chose_log_path" android:key="@string/pref_log_path_key"
 			android:title="@string/settings_log_path" android:defaultValue="@string/default_log_path"
 			android:summary="@string/server_log_path" />
+			
+		<EditTextPreference android:dialogTitle="@string/settings_time_expires_cache"
+			android:dialogMessage="@string/server_expiration_cache" android:key="@string/pref_expiration_cache_key"
+			android:title="@string/settings_time_expires_cache" android:summary="@string/server_expiration_cache"
+			android:defaultValue="@string/default_expiration_cache" android:inputType="numberDecimal" />
+		
 
 		<CheckBoxPreference android:key="@string/pref_vibrate_key"
 			android:title="@string/vibrate" android:defaultValue="@string/default_vibrate"

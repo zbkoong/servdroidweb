@@ -140,7 +140,7 @@
 	<string name="about_servdroid.web">ServDroid.Web is ontwikkeld door Joan Puig Sanz.
 		\n\nMeer informatie op http://code.google.com/p/servdroidweb/
 		\n\nAls u deze applicatie goed vindt, beschouw dan het maken van een donatie.
-		\n\nSpeciale dank voor de vertalingen gaat uit naar Steve Watts, Kim Del Rio, Asgeir Oskarsson,  Enrico Orsini en Jan Dunkerbeck.
+		\n\nSpeciale dank voor de vertalingen gaat uit naar Steve Watts, Kim Del Rio, Asgeir Oskarsson,  Enrico Orsini, Jan Dunkerbeck, Francesca Fontana en Pierre Ducoudray.
     </string>
 
 
@@ -189,7 +189,7 @@
 
 	<string name="release_notes">Uitgave opmerkingen</string>
 	<string name="release_notes_info">
-		Veranderingen:\n\n-0.1.4 verbeterde web engine en enkele fouten opgelost\n-0.1.3 Verbeterd interface, \"directory index\" toegevoegd, aantal inputs in het register te personalizeren (zie voorkeuren), nieuwe talen (Italiaans, Frans en Nederlands), enkele fouten opgelost \n-0.1.2 Fouten opgelost \n-0.1.1 Eerste uitgave \n-0.1 Test versie</string>
+		Veranderingen:\n\n-0.1.5 -0.1.4 Verbeterde web engine\n-0.1.4 Verbeterde web engine en enkele fouten opgelost\n-0.1.3 Verbeterd interface, \"directory index\" toegevoegd, aantal inputs in het register te personalizeren (zie voorkeuren), nieuwe talen (Italiaans, Frans en Nederlands), enkele fouten opgelost \n-0.1.2 Fouten opgelost \n-0.1.1 Eerste uitgave \n-0.1 Test versie</string>
 	<string name="donate">Doneren</string>
 	<string name="donate_info">Als ServDroid.web u is bevallen, zou u een donatie kunnen maken om de ontwikkelaars te steunen.
 	\n\nDit kan met een willekeurige donatie via Paypal of met een donatie-applicatie die u kunt vinden in de Android Market met een donatie van 1€ of 2€ (deze applicaties hebben enkel als functionaliteit het maken van donaties).

@@ -143,7 +143,7 @@
 	<string name="about_servdroid.web">ServDroid.Web ha sido programado por Joan Puig Sanz.
 	\n\nMás información en http://code.google.com/p/servdroidweb/
 	\n\nSi te ha gustado esta aplicación, por favor considere hacer una donación.
-	\n\nEspecial agradecimiento por las traducciones a Steve Watts, Kim Del Rio, Asgeir Oskarsson, Enrico Orsini y Jan Dunkerbeck.
+	\n\nEspecial agradecimiento por las traducciones a Steve Watts, Kim Del Rio, Asgeir Oskarsson, Enrico Orsini, Jan Dunkerbeck, Francesca Fontana y Pierre Ducoudray..
 	</string>
 
 
@@ -179,9 +179,14 @@
 	</string>
 
 	<string name="release_notes">Notas de lanzamiento</string>
-	<string name="release_notes_info">Cambios:\n\n-0.1.4 Mejorado el motor web y solucionado algunos errores\n-0.1.3 Interfaz mejorada, \"indexado de directorios\" añadido, número de entradas mostradas en el visor de registros personalizable (ver preferencias), nuevos idiomas (Italiano, Francés y Holandés) y algunos errores solucionados \n-0.1.2 Errores solucionados\n-0.1.1 Primer lanzamiento\n-0.1 Versión de pruebas</string>
+	<string name="release_notes_info">Cambios:\n\n-0.1.5 Mejorado el motor web \n-0.1.4 Mejorado el motor web y solucionado algunos errores\n-0.1.3 Interfaz mejorada, \"indexado de directorios\" añadido, número de entradas mostradas en el visor de registros personalizable (ver preferencias), nuevos idiomas (Italiano, Francés y Holandés) y algunos errores solucionados \n-0.1.2 Errores solucionados\n-0.1.1 Primer lanzamiento\n-0.1 Versión de pruebas</string>
 	<string name="donate">Donar</string>
 	<string name="donate_info">Si te ha gustado ServDroid.web, estaría bien hacer una donación para dar soporte.\n\nPuedes hacerlo con una donación arbitraria con PayPal o con una aplicación de donativo disponible en el Android Market con una cantidad fija de 1€ o 2€ (estas aplicaciones solo tienen la funcionalidad de dar un donativo, por lo que no tienen funcionalidades).\n\n¡Muchas Gracias!
 	</string>
+	
+	<!-- 0.1.5 -->
+  	<string name="settings_time_expires_cache">Caducidad de la cache</string>
+  	<string name="server_expiration_cache">Tiempo (en minutos) que el contenido es valido par los navegadores web (expiration cache)</string>
+	
 
 </resources>

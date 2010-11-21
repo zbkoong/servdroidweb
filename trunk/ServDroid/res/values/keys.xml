@@ -26,6 +26,7 @@
    <string name="pref_directory_indexing_key">key_file_indexing</string>
    <string name="pref_directory_indexing_get_template_key">key_file_indexing_get_template</string>
    <string name="pref_release_notes_key">key_release_notes</string>
+   <string name="pref_expiration_cache_key">key_expiration_cache</string>
    
    
    <!-- NOT implemented -->
