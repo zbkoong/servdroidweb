@@ -183,10 +183,6 @@
 
 	<string name="release_notes">Notes de publication</string>
 
-	<string name="release_notes_info">
-		Modifications:\n\n-0.1.5 Linterface web est ameliorée\n-0.1.4 Linterface web est ameliorée et des bugs mineurs sont fixés \n-0.1.3 l´interface est améliorée,	\"l\'indexation des répertoires\" ajouté, nombre d\'entrées affichées	dans le registre à personnaliser (voir les préférences), nouvelles langues (italien, français et néerlandais),quelques bugs corrigés
-		\n-0.1.2 Corrections d\'erreurs\n-0.1.1 Première version\n-0.1 Version d\'essai
-    </string>
 	<string name="donate">Donner</string>
 	<string name="donate_info">Si vous avez aimé ServDroid.web ce serait bien de faire un don à l\'appui. \n\nVous pouvez faire avec un don quelconque avec PayPal ou un logiciel disponible sur Android Market avec un montant fixe d\'1 € ou 2 € ( ces logiciels ont seulement la fonctionnalité de faire un don, donc pas d\'autres fonctionnalités).\n\nJe vous remercie!  </string>
 <!-- 0.1.5 -->

@@ -13,7 +13,7 @@
 	-->
 <resources>
 	<string name="app_name">ServDroid.Web</string>
-	<string name="version">0.1.5</string>
+	<string name="version">0.1.6</string>
 
 
 	<string name="text_start">Start</string>
@@ -180,6 +180,7 @@
 
 	<string name="release_notes">Release notes</string>
 	<string name="release_notes_info">Changes:\n\n
+	    -0.1.6 URL decoding and activate port numbers (for root devices under 1024)
 	    -0.1.5 Improved web engine\n
 	    -0.1.4 Improved web engine and Minor
 		bug-fix \n-0.1.3 Improved interface, added
