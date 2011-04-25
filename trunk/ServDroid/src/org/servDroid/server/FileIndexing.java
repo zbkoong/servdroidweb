@@ -22,6 +22,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
+import org.apache.http.util.EntityUtils;
+import org.servDroid.util.Encoding;
+
 public class FileIndexing implements FileIndexingInterface {
 
 	private String mPath, mFileGet;
@@ -99,14 +102,16 @@ public class FileIndexing implements FileIndexingInterface {
 		Arrays.sort(files);
 		for (int i = 0, n = files.length; i < n; i++) {
 
+			String fileName = Encoding.codeURL(mFileGet + tmp
+					+ files[i].getName());
 			// "<IMG border=\"0\" src=\"/icons/back.gif\" ALT=\"[DIR]\"> <A HREF=\"/\">Parent Directory</A>        09-Aug-2009 19:22      -</br>"
 			// +
 
 			if (files[i].isDirectory()) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/directory.png\" ALT=\"[DIR]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>-</td></tr>";
 			} else if (files[i].getName().toLowerCase().endsWith(".jpg")
@@ -116,16 +121,16 @@ public class FileIndexing implements FileIndexingInterface {
 					|| files[i].getName().toLowerCase().endsWith(".gif")) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/picture.png\" ALT=\"[IMG]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
 			} else if (files[i].getName().toLowerCase().endsWith(".pdf")) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/pdf.png\" ALT=\"[PDF]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
@@ -137,8 +142,8 @@ public class FileIndexing implements FileIndexingInterface {
 					|| files[i].getName().toLowerCase().endsWith(".sxw")) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/document.png\" ALT=\"[DOC]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
@@ -146,8 +151,8 @@ public class FileIndexing implements FileIndexingInterface {
 			} else if (files[i].getName().toLowerCase().endsWith(".css")) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/css.png\" ALT=\"[CSS]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
@@ -158,8 +163,8 @@ public class FileIndexing implements FileIndexingInterface {
 					|| files[i].getName().toLowerCase().endsWith(".sxc")) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/spreadsheet.png\" ALT=\"[CAL]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
@@ -167,8 +172,8 @@ public class FileIndexing implements FileIndexingInterface {
 			} else if (files[i].getName().toLowerCase().endsWith(".exe")) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/executable.png\" ALT=\"[EXE]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
@@ -185,8 +190,8 @@ public class FileIndexing implements FileIndexingInterface {
 					|| files[i].getName().toLowerCase().endsWith(".ar")) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/file-archiver.png\" ALT=\"[PAK]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
@@ -211,8 +216,8 @@ public class FileIndexing implements FileIndexingInterface {
 					|| files[i].getName().toLowerCase().endsWith(".asf")) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/multimedia.png\" ALT=\"[MUL]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
@@ -221,8 +226,8 @@ public class FileIndexing implements FileIndexingInterface {
 					|| files[i].getName().toLowerCase().endsWith(".htm")) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/html.png\" ALT=\"[HTM]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
@@ -236,8 +241,8 @@ public class FileIndexing implements FileIndexingInterface {
 					|| files[i].getName().toLowerCase().endsWith(".pyw")) {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/script.png\" ALT=\"[SCR]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
@@ -245,8 +250,8 @@ public class FileIndexing implements FileIndexingInterface {
 			} else {
 				text = text
 						+ "<tr><td><IMG border=\"0\" src=\"/icons/file.png\" ALT=\"[FILE]\"> <A HREF=\""
-						+ mFileGet + tmp + files[i].getName() + "\">"
-						+ files[i].getName() + "</A> " + "</td><td>"
+						+ fileName + "\">" + files[i].getName() + "</A> "
+						+ "</td><td>"
 						+ dateFormat.format(files[i].lastModified())
 						+ "</td><td>" + pharseFileSize(files[i].length())
 						+ "</td></tr>";
