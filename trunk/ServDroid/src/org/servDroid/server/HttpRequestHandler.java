@@ -34,6 +34,7 @@ import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import org.servDroid.db.LogAdapter;
+import org.servDroid.util.Encoding;
 
 import android.util.Log;
 
@@ -43,7 +44,6 @@ import android.util.Log;
  * 
  */
 public class HttpRequestHandler implements Runnable {
-	
 
 	private static final String HTTP_HEADER_IF_MODIFIED = "If-Modified-Since:";
 	private static final String INDEX_FILE = "index.html";
@@ -67,40 +67,40 @@ public class HttpRequestHandler implements Runnable {
 
 	// After how many minutes a page will expire in the browser cache
 	private int mExpires = 60;
-	
+
 	// SimpleDateFormat is not threadsafe, so we need an instance per thread
-	private DateFormat mHttpDate = new SimpleDateFormat(HTTP_DATE_FORMAT,Locale.US);
-	
-	private static Map<String,String> mimeTypes;
+	private DateFormat mHttpDate = new SimpleDateFormat(HTTP_DATE_FORMAT,
+			Locale.US);
+
+	private static Map<String, String> mimeTypes;
 	static {
 		// Maybe there is a /etc/mime-types available?
 		mimeTypes = new HashMap<String, String>();
-		mimeTypes.put("htm","text/html");
-		mimeTypes.put("css","text/css");
-		mimeTypes.put("html","text/html");
-		mimeTypes.put("xhtml","text/xhtml");
-		mimeTypes.put("txt","text/html");
-		mimeTypes.put("pdf","application/pdf");
-		mimeTypes.put("jpg","image/jpeg");
-		mimeTypes.put("gif","image/gif");
-		mimeTypes.put("png","image/png");
+		mimeTypes.put("htm", "text/html");
+		mimeTypes.put("css", "text/css");
+		mimeTypes.put("html", "text/html");
+		mimeTypes.put("xhtml", "text/xhtml");
+		mimeTypes.put("txt", "text/html");
+		mimeTypes.put("pdf", "application/pdf");
+		mimeTypes.put("jpg", "image/jpeg");
+		mimeTypes.put("gif", "image/gif");
+		mimeTypes.put("png", "image/png");
 	}
 
 	public HttpRequestHandler(Socket socket, String wwwPath, String errorPath,
-			LogAdapter logAdapter, boolean fileIndexing, int expiresTimeCache) throws Exception {
+			LogAdapter logAdapter, boolean fileIndexing, int expiresTimeCache)
+			throws Exception {
 		this.mWwwPath = wwwPath;
 		this.mErrorPath = errorPath;
 		this.mSocket = socket;
 		this.mOutput = socket.getOutputStream();
-		this.mBr = new BufferedReader(new InputStreamReader(socket
-				.getInputStream()));
+		this.mBr = new BufferedReader(new InputStreamReader(
+				socket.getInputStream()));
 		this.mLogAdapter = logAdapter;
 		this.mErrorPath = errorPath;
 		this.mExpires = expiresTimeCache;
 
 		this.mFileIndexing = fileIndexing;
-		
-		
 
 	}
 
@@ -119,8 +119,8 @@ public class HttpRequestHandler implements Runnable {
 	 */
 	private void processRequest() throws Exception {
 
-		Map<String,String> requestHeader = new HashMap<String, String>();
-		Map<String,String> responseHeader = new LinkedHashMap<String, String>();
+		Map<String, String> requestHeader = new HashMap<String, String>();
+		Map<String, String> responseHeader = new LinkedHashMap<String, String>();
 
 		String statusLine = null;
 		String httpRequest = "";
@@ -133,30 +133,30 @@ public class HttpRequestHandler implements Runnable {
 		try {
 			// Analyze the HTTP-Request
 			httpRequest = mBr.readLine();
-	
+
 			StringTokenizer s = new StringTokenizer(httpRequest);
 			String httpCommand = s.nextToken();
 			String fileGet = s.nextToken();
-			String fileName = mWwwPath + fileGet;
-	
-			
+			String fileName = Encoding.decodeURL(mWwwPath + fileGet);
+
 			// Analyze all HTTP-Request-Headers
 			while (true) {
-	
+
 				String headerLine = mBr.readLine();
-				
+
 				if (headerLine.equals(CRLF) || headerLine.equals("")) {
 					break;
 				}
-				
-				int idx =  headerLine.indexOf(" ");
-				if	( idx >= 1 ) 
-					requestHeader.put(headerLine.substring(0,idx),headerLine.substring(idx+1));
-				
-				//Log.d(TAG, "Header line: " + headerLine);
+
+				int idx = headerLine.indexOf(" ");
+				if (idx >= 1)
+					requestHeader.put(headerLine.substring(0, idx),
+							headerLine.substring(idx + 1));
+
+				// Log.d(TAG, "Header line: " + headerLine);
 			}
 
-			responseHeader.put("Server:",TAG+" server");
+			responseHeader.put("Server:", TAG + " server");
 
 			// Perform a GET or HEAD-Request
 			if (httpCommand.equals("GET") || httpCommand.equals("HEAD")) {
@@ -168,26 +168,26 @@ public class HttpRequestHandler implements Runnable {
 
 				if (file.exists()) {
 					if (file.isDirectory()) {
-						
-						if	( ! fileName.endsWith("/") ) {
-							// Directories require a trailing slash. Otherwise HTML links could be broken.
+
+						if (!fileName.endsWith("/")) {
+							// Directories require a trailing slash. Otherwise
+							// HTML links could be broken.
 							statusLine = "303 See Other";
-							responseHeader.put("Location:",fileGet + "/");
+							responseHeader.put("Location:", fileGet + "/");
 							sendBody = false;
 							fileExists = false;
-						}
-						else
-						{
+						} else {
 							file = new File(fileName + INDEX_FILE);
 							isDirectory = true;
-	
+
 							if (!file.exists()) {
 								fileExists = false;
 							} else {
-								responseHeader.put("Content-Location:",fileGet +  INDEX_FILE);
+								responseHeader.put("Content-Location:", fileGet
+										+ INDEX_FILE);
 								try {
 									fis = new FileInputStream(file);
-	
+
 								} catch (FileNotFoundException e) {
 									fileExists = false;
 								}
@@ -206,43 +206,49 @@ public class HttpRequestHandler implements Runnable {
 					fis = new FileInputStream(file);
 				}
 
-				responseHeader.put("Date:",mHttpDate.format(System.currentTimeMillis()));
+				responseHeader.put("Date:",
+						mHttpDate.format(System.currentTimeMillis()));
 				boolean notModified = false;
-				
+
 				if (!sendBody) {
 					;
 				} else if (fileExists) {
-					responseHeader.put("Last-Modified:", mHttpDate.format(file.lastModified()));
-					
-					if	( requestHeader.containsKey(HTTP_HEADER_IF_MODIFIED) ) {
-						try
-						{
-							long ifModifiedSince = mHttpDate.parse(requestHeader.get(HTTP_HEADER_IF_MODIFIED)).getTime();
-							if	( ifModifiedSince >= file.lastModified() ) {
+					responseHeader.put("Last-Modified:",
+							mHttpDate.format(file.lastModified()));
+
+					if (requestHeader.containsKey(HTTP_HEADER_IF_MODIFIED)) {
+						try {
+							long ifModifiedSince = mHttpDate.parse(
+									requestHeader.get(HTTP_HEADER_IF_MODIFIED))
+									.getTime();
+							if (ifModifiedSince >= file.lastModified()) {
 								notModified = true;
 								statusLine = "304 Not Modified";
 								sendBody = false;
 							}
-						} catch (ParseException e){
+						} catch (ParseException e) {
 							// if-modified-since-header has a defective value.
 							// we continue as the header is not present.
 						}
 					}
-					
-					if	( !notModified)
-					{
+
+					if (!notModified) {
 						statusLine = "200 OK";
-						responseHeader.put("Content-type:",contentType(file.getName()));
-						
-						if	( this.mExpires > 0) {
-							responseHeader.put("Expires:",mHttpDate.format(System.currentTimeMillis()+(mExpires*60*1000)));
+						responseHeader.put("Content-type:",
+								contentType(file.getName()));
+
+						if (this.mExpires > 0) {
+							responseHeader.put(
+									"Expires:",
+									mHttpDate.format(System.currentTimeMillis()
+											+ (mExpires * 60 * 1000)));
 						}
 					}
-					
+
 				} else if (isDirectory && !fileExists && mFileIndexing) { // Indexing
 
 					statusLine = "200 OK";
-					responseHeader.put("Content-type:","text/html");
+					responseHeader.put("Content-type:", "text/html");
 
 					FileIndexing fi = new FileIndexing();
 					entityBody = fi.getIndexing(fileName, fileGet);
@@ -255,79 +261,80 @@ public class HttpRequestHandler implements Runnable {
 						fis = new FileInputStream(fileName);
 						fileExists = true;
 						statusLine = "404 Not Found";
-						error = String.format("Object %s not found",fileGet);
-						responseHeader.put("Content-type:",contentType(fileName));
+						error = String.format("Object %s not found", fileGet);
+						responseHeader.put("Content-type:",
+								contentType(fileName));
 						info = "File not found";
 
 					} catch (FileNotFoundException e) {
 						fis = null;
 						statusLine = "404 Not Found";
-						responseHeader.put("Content-type:","text/html");
-						error = String.format("Object %s not found",fileGet);
+						responseHeader.put("Content-type:", "text/html");
+						error = String.format("Object %s not found", fileGet);
 						info = "File 404.html not found";
 					}
 
 				}
-				
-				if	( httpCommand.equals("HEAD") ) {
-					// Do not send the body. But we had to send the content-length-header "as it would be"
+
+				if (httpCommand.equals("HEAD")) {
+					// Do not send the body. But we had to send the
+					// content-length-header "as it would be"
 					sendBody = false;
 				}
 
-			} else if (httpCommand.equals("POST") ) {
+			} else if (httpCommand.equals("POST")) {
 				statusLine = "405 Method Not Allowed";
 				error = "Method Not Allowed";
-				responseHeader.put("Allow:","HEAD, GET");
-				
+				responseHeader.put("Allow:", "HEAD, GET");
+
 			} else {
 				// HTTP 1.0 only defines HEAD, GET, POST.
 				statusLine = "400 Bad Request";
 				error = "Bad Request";
 			}
 
-
 		} catch (Exception e) {
 			// Something happened while creating the response.
 			// Ok, now HTTP 500 is the right way to inform the client.
-			Log.w(TAG, "Internal Server error",e);
+			Log.w(TAG, "Internal Server error", e);
 			statusLine = "500 Internal Server Error";
-			responseHeader.put("Content-type:","text/html");
+			responseHeader.put("Content-type:", "text/html");
 			error = "Internal Server Error";
-			
+
 			Log.w(TAG, "Internal Server Error", e);
 		}
 
 		// Send the status line.
-		mOutput.write( ("HTTP/1.0 " + statusLine + CRLF ).getBytes() );
-		
-		if	( error != null ) {
-			
-			entityBody = "<HTML>"
-				+ "<HEAD><title>" + statusLine+ "</title>"
-				+ "</head><body>"
-				+ "<h1>" + statusLine + "</h1>"
-				+ "<p>" + error + "</p>"
-				+ "<hr><address>" + TAG + "</address>"
-				+ "</BODY></HTML>";
+		mOutput.write(("HTTP/1.0 " + statusLine + CRLF).getBytes());
+
+		if (error != null) {
+
+			entityBody = "<HTML>" + "<HEAD><title>" + statusLine + "</title>"
+					+ "</head><body>" + "<h1>" + statusLine + "</h1>" + "<p>"
+					+ error + "</p>" + "<hr><address>" + TAG + "</address>"
+					+ "</BODY></HTML>";
 		}
 
 		// lets try to find out the content-length.
-		if	( entityBody != null) {
-			responseHeader.put("Content-Length:",new Integer(entityBody.getBytes().length).toString());
-		}else if (fis != null ) {
-			responseHeader.put("Content-Length:",new Integer(fis.available()).toString());
+		if (entityBody != null) {
+			responseHeader.put("Content-Length:",
+					new Integer(entityBody.getBytes().length).toString());
+		} else if (fis != null) {
+			responseHeader.put("Content-Length:",
+					new Integer(fis.available()).toString());
 		}
-		
+
 		// Output all response headers
-		for (Entry<String,String> header : responseHeader.entrySet() )
-			mOutput.write( (header.getKey() + " " + header.getValue() + CRLF).getBytes() );
-		
+		for (Entry<String, String> header : responseHeader.entrySet())
+			mOutput.write((header.getKey() + " " + header.getValue() + CRLF)
+					.getBytes());
+
 		// Send a blank line to indicate the end of the header
 		// lines.
 		mOutput.write(CRLF.getBytes());
-		
+
 		// Send the entity body.
-		if	( ! sendBody ) {
+		if (!sendBody) {
 			// do not send the body.
 		} else if (entityBody != null) {
 			mOutput.write(entityBody.getBytes());
@@ -337,18 +344,17 @@ public class HttpRequestHandler implements Runnable {
 		} else {
 			// no content
 		}
-	
-		mLogAdapter.addLog(("" + mSocket.getInetAddress())
-				.replace("/", ""), httpRequest, statusLine, info!=null?info:"");
+
+		mLogAdapter.addLog(("" + mSocket.getInetAddress()).replace("/", ""),
+				httpRequest, statusLine, info != null ? info : "");
 
 		try {
-			
+
 			mOutput.close();
 			mBr.close();
 			mSocket.close();
-		}
-		catch(Exception e ) {
-			
+		} catch (Exception e) {
+
 			Log.e(TAG, "ERROR closing socket", e);
 		}
 	}
@@ -381,15 +387,14 @@ public class HttpRequestHandler implements Runnable {
 	 * @return Content type
 	 */
 	private String contentType(String fileName) {
-		
+
 		String ext = "";
 		int idx = fileName.lastIndexOf(".");
-		if	( idx >= 0 )
-		{
-			ext = fileName.substring(idx+1);
+		if (idx >= 0) {
+			ext = fileName.substring(idx + 1);
 		}
-		
-		if	( mimeTypes.containsKey(ext) )
+
+		if (mimeTypes.containsKey(ext))
 			return mimeTypes.get(ext);
 		else
 			return "application/octet-stream";
