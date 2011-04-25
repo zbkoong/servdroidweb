@@ -172,7 +172,7 @@ public class ManagePreferences extends PreferenceActivity {
 
 						try {
 							int port = Integer.parseInt((String) newValue);
-							if (port >= 65535 | port < 1024) {
+							if (port >= 65535 | port < 1) {// If you are not root, you only can until 1024
 								return false;
 							}
 
