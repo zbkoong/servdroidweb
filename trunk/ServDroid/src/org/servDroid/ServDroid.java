@@ -30,6 +30,7 @@ import org.servDroid.db.LogAdapter;
 import org.servDroid.db.LogLocal;
 import org.servDroid.db.ServdroidDbAdapter;
 import org.servDroid.server.HttpRequestHandler;
+import org.servDroid.util.Encoding;
 import org.servDroid.web.R;
 
 import android.app.AlertDialog;
