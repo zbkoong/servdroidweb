@@ -13,7 +13,7 @@
 	-->
 <resources>
 	<string name="app_name">ServDroid.Web</string>
-	<string name="version">0.1.6</string>
+	<string name="version">0.1.7</string>
 
 
 	<string name="text_start">Start</string>

@@ -22,8 +22,8 @@
 	<string name="default_expiration_cache">60</string>
 	<string name="default_vibrate">false</string>
 	<string name="default_directory_indexing">true</string>
-	<string name="default_www_path">/sdcard/servdroid/var/www/</string>
-	<string name="default_error_path">/sdcard/servdroid/var/www/error/</string>
-	<string name="default_log_path">/sdcard/servdroid/var/log/</string>
+	<string name="default_www_path">/servdroid/var/www/</string>
+	<string name="default_error_path">/servdroid/var/www/error/</string>
+	<string name="default_log_path">/servdroid/var/log/</string>
 
 </resources>

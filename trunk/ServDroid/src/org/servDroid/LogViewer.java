@@ -35,6 +35,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -411,7 +412,7 @@ public class LogViewer extends ListActivity {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		return pref.getString(getResources().getString(
-				R.string.pref_log_path_key), getResources().getString(
+				R.string.pref_log_path_key), Environment.getExternalStorageDirectory() + getResources().getString(
 				R.string.default_log_path));
 
 	}

@@ -45,6 +45,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
@@ -63,6 +64,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+
+//iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
 /**
  * This is the main class.
  * 
@@ -94,13 +97,13 @@ public class ServDroid extends ListActivity {
 
 	private static final int START_NOTIFICATION_ID = 1;
 
-	private LogAdapter mLogAdapter;
+	private static LogAdapter mLogAdapter;
 	private ToggleButton mStartStopButton;
 	private TextView mTexStat, mTexServerInfo;
 
-	private ServerSocket mServerSocket;
-	private serverThread mLaunchWebServer;
-	private Thread mServerThread;
+	private static ServerSocket mServerSocket;
+	private static serverThread mLaunchWebServer;
+	private static Thread mServerThread;
 
 	private LogListViewAdapter mLogListViewAdapter;
 
@@ -108,12 +111,12 @@ public class ServDroid extends ListActivity {
 
 	private long mTimeRefresh = 10000;
 
-	private Thread mRefresh;
+	private static Thread mRefresh;
 
 	public static final int GUIUPDATEIDENTIFIER = 0x101;
 	public static final int VIBRATE_IDENTIFIER = 0x102;
 
-	private NotificationManager mNotificationManager;
+	private static NotificationManager mNotificationManager;
 
 	private WifiManager mWifiManager;
 
@@ -205,15 +208,26 @@ public class ServDroid extends ListActivity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.main);
-		setRequestedOrientation(1);
+		//setRequestedOrientation(1);
 
 		mStartStopButton = (ToggleButton) findViewById(R.id.startstop);
 		mTexStat = (TextView) findViewById(R.id.textStat);
 		mTexServerInfo = (TextView) findViewById(R.id.textServerInfo);
 
-		mLogAdapter = new LogAdapter(this);
+		if (null != mLogAdapter){
+			mLogAdapter = new LogAdapter(this);
+		}
 
-		mTexServerInfo.setText(" -- ");
+		if (null != mServerThread && mServerThread.isAlive()){
+			mTexServerInfo.setText("IP: "
+					+ getLocalIpAddress()
+					+ " "
+					+ getResources().getString(
+							R.string.text_port) + ": "
+					+ getPort());
+		}else{
+			mTexServerInfo.setText(" -- ");
+		}
 		mTexStat.setText(R.string.text_stopped);
 
 		mWifiManager = (WifiManager) this
@@ -547,6 +561,10 @@ public class ServDroid extends ListActivity {
 	 * 
 	 */
 	private boolean startWebServer() {
+		
+		if (null != mRefresh){
+			mRefresh.stop();
+		}
 
 		mRefresh = new Thread(new Runnable() {
 
@@ -856,7 +874,7 @@ public class ServDroid extends ListActivity {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		return pref.getString(
-				getResources().getString(R.string.pref_www_path_key),
+				getResources().getString(R.string.pref_www_path_key),Environment.getExternalStorageDirectory() +
 				getResources().getString(R.string.default_www_path));
 	}
 
@@ -871,7 +889,7 @@ public class ServDroid extends ListActivity {
 		SharedPreferences pref = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		return pref.getString(
-				getResources().getString(R.string.pref_error_path_key),
+				getResources().getString(R.string.pref_error_path_key),Environment.getExternalStorageDirectory() +
 				getResources().getString(R.string.default_error_path));
 
 	}

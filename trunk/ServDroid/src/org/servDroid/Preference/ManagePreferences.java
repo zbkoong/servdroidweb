@@ -37,6 +37,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.CheckBoxPreference;
@@ -407,7 +408,9 @@ public class ManagePreferences extends PreferenceActivity {
 		File folder = new File(path);
 		if (!folder.exists() | (folder.exists() & folder.isDirectory())) {
 			try {
-				folder.mkdirs();
+				if (!folder.mkdirs()){
+					Log.e(TAG, "ERROR creating th folder: " + path);
+				}
 				File file = new File(path + "/404.html");
 				if (!file.exists()) {
 					try {
@@ -449,7 +452,7 @@ public class ManagePreferences extends PreferenceActivity {
 				.getDefaultSharedPreferences(this);
 		return pref.getString(
 				getResources().getString(R.string.pref_www_path_key),
-				getResources().getString(R.string.default_www_path));
+				Environment.getExternalStorageDirectory() + getResources().getString(R.string.default_www_path));
 	}
 
 	/**
@@ -580,7 +583,18 @@ public class ManagePreferences extends PreferenceActivity {
 				StringTokenizer st = new StringTokenizer(url.getFile(), "/");
 				while (st.hasMoreTokens())
 					localFile = st.nextToken();
-				fos = new FileOutputStream(mPath + "/" + localFile);
+				
+				//Check if the file exist
+				File folder = new File(mPath);
+				if (!folder.exists() | (folder.exists() & folder.isDirectory())) {
+					folder.mkdir();
+				}
+				File file = new File(mPath + "/" + localFile);
+				if (file.exists()){
+					file.delete();
+				}
+				//file.createNewFile();
+				fos = new FileOutputStream(file);
 
 				Message msg2 = mHandler.obtainMessage();
 				Bundle b2 = new Bundle();
@@ -601,17 +615,19 @@ public class ManagePreferences extends PreferenceActivity {
 						msg3.setData(b3);
 						mHandler.sendMessage(msg3);
 					}
-
 				}
 				is.close();
 				fos.close();
 			} catch (MalformedURLException e) {
+				Log.e(TAG, e.getMessage());
+				
 				Message msg2 = mHandler.obtainMessage();
 				Bundle b2 = new Bundle();
 				b2.putInt("counter", -2);
 				msg2.setData(b2);
 				mHandler.sendMessage(msg2);
 			} catch (IOException e) {
+				Log.e(TAG, e.getMessage());
 
 				Message msg2 = mHandler.obtainMessage();
 				Bundle b2 = new Bundle();
@@ -754,15 +770,15 @@ public class ManagePreferences extends PreferenceActivity {
 		editor.commit();
 		mPreferencePort
 				.setText(getResources().getString(R.string.default_port));
-		mPreferenceWwwPath.setText(getResources().getString(
+		mPreferenceWwwPath.setText(Environment.getExternalStorageDirectory() + getResources().getString(
 				R.string.default_www_path));
-		checkWwwPath(getResources().getString(R.string.default_www_path));
-		mPreferenceErrorPath.setText(getResources().getString(
+		checkWwwPath(Environment.getExternalStorageDirectory() + getResources().getString(R.string.default_www_path));
+		mPreferenceErrorPath.setText(Environment.getExternalStorageDirectory() + getResources().getString(
 				R.string.default_error_path));
-		checkErrorPath(getResources().getString(R.string.default_error_path));
-		mPreferenceLogPath.setText(getResources().getString(
+		checkErrorPath(Environment.getExternalStorageDirectory() + getResources().getString(R.string.default_error_path));
+		mPreferenceLogPath.setText(Environment.getExternalStorageDirectory() + getResources().getString(
 				R.string.default_log_path));
-		checkLogPath(getResources().getString(R.string.default_log_path));
+		checkLogPath(Environment.getExternalStorageDirectory() + getResources().getString(R.string.default_log_path));
 		mPreferenceMaxClients.setText(getResources().getString(
 				R.string.default_max_clients));
 		mPreferenceExpirationCache.setText(getResources().getString(
