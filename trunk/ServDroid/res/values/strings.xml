@@ -199,6 +199,12 @@
   <!-- 0.1.5 -->
   	<string name="settings_time_expires_cache">Expiration cache</string>
   	<string name="server_expiration_cache">After how many minutes a page will expire in the browser cache</string>
-  	
+  
+  <!--  0.2 -->
+  <string name="settings_autostart">Autostart policy</string>
+  <string name="settings_autostart_on_wifi_on">Autostart wifi</string>
+  <string name="settings_autostart_on_wifi_on_text">Start server when a get any wifi connection </string>
+  <string name="settings_autostart_on_boot">Autostart on boot</string>
+  <string name="settings_autostart_on_boot_text">When the phones turn on, the server will automatically starts</string>
   
 </resources>

@@ -21,6 +21,8 @@
    <string name="pref_log_path_key">key_log_path</string>
    <string name="pref_error_path_key">key_error_path</string>
    <string name="pref_vibrate_key">key_vibrate</string>
+   <string name="pref_autostart_boot_key">key_autostart_boot</string>
+   <string name="pref_autostart_wifi_key">key_autostart_wifi</string>
    <string name="pref_reset_config_key">key_reset_config</string>
    <string name="pref_about_key">key_about</string>
    <string name="pref_directory_indexing_key">key_file_indexing</string>

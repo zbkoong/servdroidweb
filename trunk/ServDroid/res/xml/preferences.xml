@@ -28,18 +28,15 @@
 
 		<EditTextPreference android:dialogTitle="@string/settings_www_path"
 			android:dialogMessage="@string/chose_www_path" android:key="@string/pref_www_path_key"
-			android:title="@string/settings_www_path" android:defaultValue="@string/default_www_path"
-			android:summary="@string/server_www_path" />
+			android:title="@string/settings_www_path" android:summary="@string/server_www_path" />
 
 		<EditTextPreference android:dialogTitle="@string/settings_error_path"
 			android:dialogMessage="@string/chose_error_path" android:key="@string/pref_error_path_key"
-			android:title="@string/settings_error_path" android:defaultValue="@string/default_error_path"
-			android:summary="@string/server_error_path" />
+			android:title="@string/settings_error_path"	android:summary="@string/server_error_path" />
 
 		<EditTextPreference android:dialogTitle="@string/settings_log_path"
 			android:dialogMessage="@string/chose_log_path" android:key="@string/pref_log_path_key"
-			android:title="@string/settings_log_path" android:defaultValue="@string/default_log_path"
-			android:summary="@string/server_log_path" />
+			android:title="@string/settings_log_path" android:summary="@string/server_log_path" />
 			
 		<EditTextPreference android:dialogTitle="@string/settings_time_expires_cache"
 			android:dialogMessage="@string/server_expiration_cache" android:key="@string/pref_expiration_cache_key"
@@ -50,6 +47,19 @@
 		<CheckBoxPreference android:key="@string/pref_vibrate_key"
 			android:title="@string/vibrate" android:defaultValue="@string/default_vibrate"
 			android:summary="@string/server_vibrate" />
+			
+			
+		<PreferenceScreen android:title="@string/settings_autostart">
+
+			<CheckBoxPreference android:key="@string/pref_autostart_boot_key"
+			android:title="@string/settings_autostart_on_boot" android:defaultValue="@string/default_autostart"
+			android:summary="@string/settings_autostart_on_boot_text" />
+			
+			<CheckBoxPreference android:key="@string/pref_autostart_wifi_key"
+			android:title="@string/settings_autostart_on_wifi_on" android:defaultValue="@string/default_autostart"
+			android:summary="@string/settings_autostart_on_wifi_on_text" />
+
+		</PreferenceScreen>
 
 		<PreferenceScreen android:title="@string/directory_indexing">
 
