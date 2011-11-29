@@ -17,58 +17,49 @@
 package org.servDroid.server;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
-import org.apache.http.util.EntityUtils;
 import org.servDroid.util.Encoding;
 
-public class FileIndexing implements FileIndexingInterface {
 
-	private String mPath, mFileGet;
+public class FileIndexing {
 
-	/**
-	 * Constructor to create a HTML document of file indexing
-	 * 
-	 */
-	public FileIndexing() {
-
-	}
 
 	/**
 	 * Get the file indexing document for an specific folder
 	 * 
-	 * @param path
+	 * @param path_
 	 *            The www path
-	 * @param fileGet
+	 * @param fileGet_
 	 *            The path to indexing
 	 * @return File indexing document
 	 */
-	public String getIndexing(String path, String fileGet) {
-		mPath = path;
-		mFileGet = fileGet;
+	public static String getIndexing(String path, String fileGet, String version) {
+		if (version == null){
+			version = "";
+		}
 		return "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN/"
 				+ "http://www.w3.org/TR/REC-html40/loose.dtd\">"
 				+ "<HTML>"
 				+ "<HEAD>"
 				+ "<TITLE>Index of "
-				+ mFileGet
+				+ URLDecoder.decode(fileGet)
 				+ "</TITLE>"
 				+ "<link href=\"/default_style.css\" rel=\"stylesheet\" type=\"text/css\" />"
 				+ "</HEAD>"
 				+ "<H1>Index of "
-				+ mFileGet
+				+ URLDecoder.decode(fileGet)
 				+ "</H1>"
 				+ "</PRE><HR>"
 				+ "<table><tr><th scope=\"col\">Name</th><th scope=\"col\">Last modified</th><th scope=\"col\">Size</th></tr>"
-
-				+ listPath()
-
+				+ listPath(path, fileGet)
 				+ "</table>"
-
-				+ "</PRE><HR>" + "<ADDRESS>ServDroid.web</ADDRESS>"
+				+ "</PRE><HR>"
+				+ "<ADDRESS><a href=\"http://code.google.com/p/servdroidweb/\">ServDroid.web " + version + "</a></ADDRESS>"
 				+ "</BODY></HTML>";
 	}
 
@@ -77,185 +68,142 @@ public class FileIndexing implements FileIndexingInterface {
 	 * 
 	 * @return HTML ready to append in to the file indexing HTML
 	 */
-	private String listPath() {
+	private static String listPath(String path, String fileGet) {
 		File files[];
 		DateFormat dateFormat = new SimpleDateFormat("d-MMM-yyyy HH:mm");
 
-		File _path = new File(mPath);
+		File _path = new File(path);
 		files = _path.listFiles();
-
-		// String text =
-		// "<IMG border=\"0\" src=\"/icons/back.gif\" ALT=\"[DIR]\"> <A HREF=\"/\">Parent Directory</A>        "
-		// + dateString + "      -<br>";
 
 		String text = "";
 		String tmp = "/";
 
-		if (!mFileGet.equals("/")) {
-			text = "<tr><td<IMG border=\"0\" src=\"/icons/go-back.png\" ALT=\"[DIR]\"> <A HREF=\"/\">Parent Directory</A></td><td>"
+		if (!fileGet.equals("/")) {
+			text = "<tr><td<IMG border=\"0\" src=\"/icons/go-back.png\" ALT=\"[DIR]\"> <A HREF=\"..\">Parent Directory</A></td><td>"
 					+ dateFormat.format(_path.lastModified())
 					+ "</td><td>-</td></tr>";
 
-		} else {
-			tmp = "";
 		}
 		Arrays.sort(files);
 		for (int i = 0, n = files.length; i < n; i++) {
 
-			String fileName = Encoding.codeURL(mFileGet + tmp
-					+ files[i].getName());
+			if (fileGet.endsWith("/")) {
+				tmp = "";
+			} else {
+				tmp = "/";
+			}
+			String longFileName = fileGet + tmp + files[i].getName();
+			String fileName = files[i].getName();
+			String fileNameLowerCase = fileName.toLowerCase();
 			// "<IMG border=\"0\" src=\"/icons/back.gif\" ALT=\"[DIR]\"> <A HREF=\"/\">Parent Directory</A>        09-Aug-2009 19:22      -</br>"
 			// +
-
+			String imgUrl = "";
+			String alt = "";
+			String size = null;
+			
 			if (files[i].isDirectory()) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/directory.png\" ALT=\"[DIR]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>-</td></tr>";
-			} else if (files[i].getName().toLowerCase().endsWith(".jpg")
-					|| files[i].getName().toLowerCase().endsWith(".png")
-					|| files[i].getName().toLowerCase().endsWith(".bmp")
-					|| files[i].getName().toLowerCase().endsWith(".jpeg")
-					|| files[i].getName().toLowerCase().endsWith(".gif")) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/picture.png\" ALT=\"[IMG]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
-			} else if (files[i].getName().toLowerCase().endsWith(".pdf")) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/pdf.png\" ALT=\"[PDF]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
+				imgUrl = "/icons/directory.png";
+				alt = "DIR";
+				size = "-";
+			} else if (fileNameLowerCase.endsWith(".jpg")
+					|| fileNameLowerCase.endsWith(".png")
+					|| fileNameLowerCase.endsWith(".bmp")
+					|| fileNameLowerCase.endsWith(".jpeg")
+					|| fileNameLowerCase.endsWith(".gif")) {
+				imgUrl = "/icons/picture.png";
+				alt = "IMG";
+			} else if (fileNameLowerCase.endsWith(".pdf")) {
+				imgUrl = "/icons/pdf.png";
+				alt = "PDF";
 
-			} else if (files[i].getName().toLowerCase().endsWith(".doc")
-					|| files[i].getName().toLowerCase().endsWith(".docx")
-					|| files[i].getName().toLowerCase().endsWith(".odt")
-					|| files[i].getName().toLowerCase().endsWith(".rtf")
-					|| files[i].getName().toLowerCase().endsWith(".sxw")) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/document.png\" ALT=\"[DOC]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
+			} else if (fileNameLowerCase.endsWith(".doc")
+					|| fileNameLowerCase.endsWith(".docx")
+					|| fileNameLowerCase.endsWith(".odt")
+					|| fileNameLowerCase.endsWith(".rtf")
+					|| fileNameLowerCase.endsWith(".sxw")) {
+				imgUrl = "/icons/document.png";
+				alt = "DOC";
 
-			} else if (files[i].getName().toLowerCase().endsWith(".css")) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/css.png\" ALT=\"[CSS]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
+			} else if (fileNameLowerCase.endsWith(".css")) {
+				imgUrl = "/icons/css.png";
+				alt = "CSS";
 
-			} else if (files[i].getName().endsWith(".xls")
-					|| files[i].getName().toLowerCase().endsWith(".xlsx")
-					|| files[i].getName().toLowerCase().endsWith(".ods")
-					|| files[i].getName().toLowerCase().endsWith(".sxc")) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/spreadsheet.png\" ALT=\"[CAL]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
+			} else if (fileName.endsWith(".xls")
+					|| fileNameLowerCase.endsWith(".xlsx")
+					|| fileNameLowerCase.endsWith(".ods")
+					|| fileNameLowerCase.endsWith(".sxc")) {
+				imgUrl = "/icons/spreadsheet.png";
+				alt = "CAL";
 
-			} else if (files[i].getName().toLowerCase().endsWith(".exe")) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/executable.png\" ALT=\"[EXE]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
+			} else if (fileNameLowerCase.endsWith(".exe")) {
+				imgUrl = "/icons/executable.png";
+				alt = "EXE";
 
-			} else if (files[i].getName().toLowerCase().endsWith(".zip")
-					|| files[i].getName().toLowerCase().endsWith(".rar")
-					|| files[i].getName().toLowerCase().endsWith(".gz")
-					|| files[i].getName().toLowerCase().endsWith(".tar")
-					|| files[i].getName().toLowerCase().endsWith(".jar")
-					|| files[i].getName().toLowerCase().endsWith(".bz2")
-					|| files[i].getName().toLowerCase().endsWith(".lzma")
-					|| files[i].getName().toLowerCase().endsWith(".7z")
-					|| files[i].getName().toLowerCase().endsWith(".cbz")
-					|| files[i].getName().toLowerCase().endsWith(".ar")) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/file-archiver.png\" ALT=\"[PAK]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
+			} else if (fileNameLowerCase.endsWith(".zip")
+					|| fileNameLowerCase.endsWith(".rar")
+					|| fileNameLowerCase.endsWith(".gz")
+					|| fileNameLowerCase.endsWith(".tar")
+					|| fileNameLowerCase.endsWith(".jar")
+					|| fileNameLowerCase.endsWith(".bz2")
+					|| fileNameLowerCase.endsWith(".lzma")
+					|| fileNameLowerCase.endsWith(".7z")
+					|| fileNameLowerCase.endsWith(".cbz")
+					|| fileNameLowerCase.endsWith(".ar")) {
+				imgUrl = "/icons/file-archiver.png";
+				alt = "PAK";
 
-			} else if (files[i].getName().toLowerCase().endsWith(".mp3")
-					|| files[i].getName().toLowerCase().endsWith(".mp4")
-					|| files[i].getName().toLowerCase().endsWith(".wmv")
-					|| files[i].getName().toLowerCase().endsWith(".mpg")
-					|| files[i].getName().toLowerCase().endsWith(".divx")
-					|| files[i].getName().toLowerCase().endsWith(".ogg")
-					|| files[i].getName().toLowerCase().endsWith(".avi")
-					|| files[i].getName().toLowerCase().endsWith(".aac")
-					|| files[i].getName().toLowerCase().endsWith(".ogm")
-					|| files[i].getName().toLowerCase().endsWith(".cda")
-					|| files[i].getName().toLowerCase().endsWith(".wma")
-					|| files[i].getName().toLowerCase().endsWith(".wav")
-					|| files[i].getName().toLowerCase().endsWith(".mid")
-					|| files[i].getName().toLowerCase().endsWith(".midi")
-					|| files[i].getName().toLowerCase().endsWith(".mkv")
-					|| files[i].getName().toLowerCase().endsWith(".mov")
-					|| files[i].getName().toLowerCase().endsWith(".3gp")
-					|| files[i].getName().toLowerCase().endsWith(".asf")) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/multimedia.png\" ALT=\"[MUL]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
+			} else if (fileNameLowerCase.endsWith(".mp3")
+					|| fileNameLowerCase.endsWith(".mp4")
+					|| fileNameLowerCase.endsWith(".wmv")
+					|| fileNameLowerCase.endsWith(".mpg")
+					|| fileNameLowerCase.endsWith(".divx")
+					|| fileNameLowerCase.endsWith(".ogg")
+					|| fileNameLowerCase.endsWith(".avi")
+					|| fileNameLowerCase.endsWith(".aac")
+					|| fileNameLowerCase.endsWith(".ogm")
+					|| fileNameLowerCase.endsWith(".cda")
+					|| fileNameLowerCase.endsWith(".wma")
+					|| fileNameLowerCase.endsWith(".wav")
+					|| fileNameLowerCase.endsWith(".mid")
+					|| fileNameLowerCase.endsWith(".midi")
+					|| fileNameLowerCase.endsWith(".mkv")
+					|| fileNameLowerCase.endsWith(".mov")
+					|| fileNameLowerCase.endsWith(".3gp")
+					|| fileNameLowerCase.endsWith(".asf")) {
+				imgUrl = "/icons/multimedia.png";
+				alt = "MUL";
 
-			} else if (files[i].getName().toLowerCase().endsWith(".html")
-					|| files[i].getName().toLowerCase().endsWith(".htm")) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/html.png\" ALT=\"[HTM]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
+			} else if (fileNameLowerCase.endsWith(".html")
+					|| fileNameLowerCase.endsWith(".htm")) {
+				imgUrl = "/icons/html.png";
+				alt = "HTM";
 
-			} else if (files[i].getName().toLowerCase().endsWith(".sh")
-					|| files[i].getName().toLowerCase().endsWith(".vbs")
-					|| files[i].getName().toLowerCase().endsWith(".py")
-					|| files[i].getName().toLowerCase().endsWith(".pyc")
-					|| files[i].getName().toLowerCase().endsWith(".pyd")
-					|| files[i].getName().toLowerCase().endsWith(".pyo")
-					|| files[i].getName().toLowerCase().endsWith(".pyw")) {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/script.png\" ALT=\"[SCR]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
+			} else if (fileNameLowerCase.endsWith(".sh")
+					|| fileNameLowerCase.endsWith(".vbs")
+					|| fileNameLowerCase.endsWith(".py")
+					|| fileNameLowerCase.endsWith(".pyc")
+					|| fileNameLowerCase.endsWith(".pyd")
+					|| fileNameLowerCase.endsWith(".pyo")
+					|| fileNameLowerCase.endsWith(".pyw")) {
+				imgUrl = "/icons/script.png";
+				alt = "SCR";
 
 			} else {
-				text = text
-						+ "<tr><td><IMG border=\"0\" src=\"/icons/file.png\" ALT=\"[FILE]\"> <A HREF=\""
-						+ fileName + "\">" + files[i].getName() + "</A> "
-						+ "</td><td>"
-						+ dateFormat.format(files[i].lastModified())
-						+ "</td><td>" + pharseFileSize(files[i].length())
-						+ "</td></tr>";
+				imgUrl = "/icons/file.png";
+				alt = "FILE";
 			}
+			if (size == null){
+				size = pharseFileSize(files[i].length());
+			}
+			longFileName = Encoding.encode(longFileName);
+			text = text
+					+ "<tr><td><IMG border=\"0\" src=\"" + imgUrl +"\" ALT=\"[" + alt + "]\"> <A HREF=\""
+					+ longFileName + "\">" + fileName + "</A> "
+					+ "</td><td>"
+					+ dateFormat.format(files[i].lastModified())
+					+ "</td><td><center>" + size
+					+ "</center></td></tr>";
+			
 		}
 		return text;
 	}
@@ -266,7 +214,7 @@ public class FileIndexing implements FileIndexingInterface {
 	 * @param lengthBytes
 	 * @return The length ready to be showed
 	 */
-	private String pharseFileSize(long lengthBytes) {
+	private static String pharseFileSize(long lengthBytes) {
 		String size;
 
 		if (lengthBytes <= 1024) {

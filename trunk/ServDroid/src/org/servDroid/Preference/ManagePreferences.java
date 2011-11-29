@@ -16,10 +16,8 @@
 
 package org.servDroid.Preference;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -59,6 +57,10 @@ import android.widget.Toast;
 public class ManagePreferences extends PreferenceActivity {
 	private static final String TAG = "ServDroid";
 
+	// v0.2
+	private CheckBoxPreference mPreferenceAutostartWifi;
+	private CheckBoxPreference mPreferenceAutostartBoot;
+	///////
 	private EditTextPreference mPreferencePort;
 	private EditTextPreference mPreferenceMaxClients;
 	private EditTextPreference mPreferenceWwwPath;
@@ -153,6 +155,12 @@ public class ManagePreferences extends PreferenceActivity {
 		mPreferenceFileIndexing = (CheckBoxPreference) findPreference(getResources()
 				.getString(R.string.pref_vibrate_key));
 
+		mPreferenceAutostartBoot = (CheckBoxPreference) findPreference(getResources()
+				.getString(R.string.pref_autostart_boot_key));
+
+		mPreferenceAutostartWifi = (CheckBoxPreference) findPreference(getResources()
+				.getString(R.string.pref_autostart_wifi_key));
+
 		mPreferenceLogEntries = (ListPreference) findPreference(getResources()
 				.getString(R.string.pref_log_entries_key));
 
@@ -165,6 +173,10 @@ public class ManagePreferences extends PreferenceActivity {
 		mPreferenceReleaseNotes = (Preference) findPreference(getResources()
 				.getString(R.string.pref_release_notes_key));
 
+		mPreferenceWwwPath.setText(AccessPreferences.getWwwPath());
+		mPreferenceErrorPath.setText(AccessPreferences.getErrorPath());
+		mPreferenceLogPath.setText(AccessPreferences.getLogPath());
+
 		// Check the port
 		mPreferencePort
 				.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -173,7 +185,9 @@ public class ManagePreferences extends PreferenceActivity {
 
 						try {
 							int port = Integer.parseInt((String) newValue);
-							if (port >= 65535 | port < 1) {// If you are not root, you only can until 1024
+							if (port >= 65535 | port < 1) {// If you are not
+															// root, you only
+															// can until 1024
 								return false;
 							}
 
@@ -227,7 +241,8 @@ public class ManagePreferences extends PreferenceActivity {
 					public boolean onPreferenceChange(Preference preference,
 							Object newValue) {
 
-						return checkWwwPath((String) newValue);
+						return AccessPreferences
+								.checkWwwPath((String) newValue);
 					}
 				});
 
@@ -237,7 +252,8 @@ public class ManagePreferences extends PreferenceActivity {
 
 					public boolean onPreferenceChange(Preference preference,
 							Object newValue) {
-						return checkErrorPath((String) newValue);
+						return AccessPreferences
+								.checkErrorPath((String) newValue);
 					}
 
 				});
@@ -248,7 +264,8 @@ public class ManagePreferences extends PreferenceActivity {
 
 					public boolean onPreferenceChange(Preference preference,
 							Object newValue) {
-						return checkLogPath((String) newValue);
+						return AccessPreferences
+								.checkLogPath((String) newValue);
 					}
 				});
 
@@ -300,162 +317,6 @@ public class ManagePreferences extends PreferenceActivity {
 	}
 
 	/**
-	 * Check if the WWW root path is available. If the folder does not exist
-	 * create one and add a template (index.html).
-	 * 
-	 * @param path
-	 *            The www path
-	 * @return true if it is available, false otherwise.
-	 */
-	private boolean checkWwwPath(String path) {
-		if (path == null) {
-			return false;
-		}
-		// if (!path.endsWith("/")) {
-		// path = path + "/";
-		// }
-		if (path.contains("\n")) {
-			return false;
-		}
-		File folder = new File(path);
-		if (!folder.exists() | (folder.exists() & folder.isDirectory())) {
-			try {
-				folder.mkdirs();
-				File file = new File(path + "/index.html");
-				if (!file.exists()) {
-					try {
-						// Create file
-						FileWriter fstream = new FileWriter(file);
-						BufferedWriter out = new BufferedWriter(fstream);
-						out.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
-								+ "<html><head><meta content=\"text/html; charset=UTF8\" http-equiv=\"content-type\"><title>Hello</title></head><body>"
-								+ "<div style=\"text-align: center;\"><big><big><big><span style=\"font-weight: bold;\">ServDroid:<br>"
-								+ "It works!<br>"
-								+ "</span></big></big></big></div>"
-								+ "</body></html>");
-						// Close the output stream
-						out.close();
-					} catch (Exception e) {
-						Log.e(TAG, "Error: Writing default index.html", e);
-						return false;
-					}
-				}
-
-			} catch (Exception e) {
-				Log.e(TAG, "Error creating folder " + folder.getAbsolutePath(),
-						e);
-				return false;
-			}
-		}
-
-		return true;
-
-	}
-
-	/**
-	 * Check if the Log path is available. If the folder does not exists create
-	 * one and add a template.
-	 * 
-	 * @param path
-	 *            The log path
-	 * @return true if it is available, false otherwise.
-	 */
-	private boolean checkLogPath(String path) {
-		if (path == null) {
-			return false;
-		}
-		// if (!path.endsWith("/")) {
-		// path = path + "/";
-		// }
-		if (path.contains("\n")) {
-			return false;
-		}
-		File folder = new File(path);
-		if (!folder.exists() | (folder.exists() & folder.isDirectory())) {
-			try {
-				folder.mkdirs();
-
-			} catch (Exception e) {
-				Log.e(TAG, "Error creating folder " + folder.getAbsolutePath(),
-						e);
-				return false;
-			}
-
-		}
-
-		return true;
-
-	}
-
-	/**
-	 * Check if the Error root path is available. If the folder does not exist
-	 * create one and add a template (404.html).
-	 * 
-	 * @param path
-	 *            The error path
-	 * @return true if it is available, false otherwise.
-	 */
-	private boolean checkErrorPath(String path) {
-		if (path == null) {
-			return false;
-		}
-		// if (!path.endsWith("/")) {
-		// path = path + "/";
-		// }
-		if (path.contains("\n")) {
-			return false;
-		}
-		File folder = new File(path);
-		if (!folder.exists() | (folder.exists() & folder.isDirectory())) {
-			try {
-				if (!folder.mkdirs()){
-					Log.e(TAG, "ERROR creating th folder: " + path);
-				}
-				File file = new File(path + "/404.html");
-				if (!file.exists()) {
-					try {
-						// Create file
-						FileWriter fstream = new FileWriter(file);
-						BufferedWriter out = new BufferedWriter(fstream);
-						out.write("<HTML>"
-								+ "<HEAD><title>404 Not Found</title>"
-								+ "</head><body> <div style=\"text-align: center;\">"
-								+ "<big><big><big><span style=\"font-weight: bold;\">"
-								+ "<br>ERROR 404: Document not Found<br></span></big></big></big></div>"
-								+ "</BODY></HTML>");
-						// Close the output stream
-						out.close();
-					} catch (Exception e) {
-						Log.e(TAG, "Error: Writing default index.html", e);
-						return false;
-					}
-				}
-
-			} catch (Exception e) {
-				Log.e(TAG, "Error creating folder " + folder.getAbsolutePath(),
-						e);
-				return false;
-			}
-
-		}
-		return false;
-
-	}
-
-	/**
-	 * Get the www path through SharedPreferences
-	 * 
-	 * @return www path
-	 */
-	private String getWwwPath() {
-		SharedPreferences pref = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		return pref.getString(
-				getResources().getString(R.string.pref_www_path_key),
-				Environment.getExternalStorageDirectory() + getResources().getString(R.string.default_www_path));
-	}
-
-	/**
 	 * Show the "download template" dialog
 	 */
 	private void showDownloadTemplateDialog() {
@@ -488,7 +349,7 @@ public class ManagePreferences extends PreferenceActivity {
 								ProgressThread progressThread = new ProgressThread(
 										handler,
 										"http://servdroidweb.googlecode.com/files/servdroid-file-indexing-template.zip",
-										getWwwPath());
+										AccessPreferences.getWwwPath());
 								progressThread.start();
 
 							}
@@ -583,17 +444,17 @@ public class ManagePreferences extends PreferenceActivity {
 				StringTokenizer st = new StringTokenizer(url.getFile(), "/");
 				while (st.hasMoreTokens())
 					localFile = st.nextToken();
-				
-				//Check if the file exist
+
+				// Check if the file exist
 				File folder = new File(mPath);
 				if (!folder.exists() | (folder.exists() & folder.isDirectory())) {
 					folder.mkdir();
 				}
 				File file = new File(mPath + "/" + localFile);
-				if (file.exists()){
+				if (file.exists()) {
 					file.delete();
 				}
-				//file.createNewFile();
+				// file.createNewFile();
 				fos = new FileOutputStream(file);
 
 				Message msg2 = mHandler.obtainMessage();
@@ -620,7 +481,7 @@ public class ManagePreferences extends PreferenceActivity {
 				fos.close();
 			} catch (MalformedURLException e) {
 				Log.e(TAG, e.getMessage());
-				
+
 				Message msg2 = mHandler.obtainMessage();
 				Bundle b2 = new Bundle();
 				b2.putInt("counter", -2);
@@ -643,9 +504,9 @@ public class ManagePreferences extends PreferenceActivity {
 			mHandler.sendMessage(msg);
 
 			ZipUtils unzip = new ZipUtils();
-			if (!unzip.unzipArchive(new File(getWwwPath()
+			if (!unzip.unzipArchive(new File(AccessPreferences.getWwwPath()
 					+ "/servdroid-file-indexing-template.zip"), new File(
-					getWwwPath()))) {
+					AccessPreferences.getWwwPath()))) {
 				Message msg2 = mHandler.obtainMessage();
 				Bundle b2 = new Bundle();
 				b2.putInt("counter", -2);
@@ -770,15 +631,21 @@ public class ManagePreferences extends PreferenceActivity {
 		editor.commit();
 		mPreferencePort
 				.setText(getResources().getString(R.string.default_port));
-		mPreferenceWwwPath.setText(Environment.getExternalStorageDirectory() + getResources().getString(
-				R.string.default_www_path));
-		checkWwwPath(Environment.getExternalStorageDirectory() + getResources().getString(R.string.default_www_path));
-		mPreferenceErrorPath.setText(Environment.getExternalStorageDirectory() + getResources().getString(
-				R.string.default_error_path));
-		checkErrorPath(Environment.getExternalStorageDirectory() + getResources().getString(R.string.default_error_path));
-		mPreferenceLogPath.setText(Environment.getExternalStorageDirectory() + getResources().getString(
-				R.string.default_log_path));
-		checkLogPath(Environment.getExternalStorageDirectory() + getResources().getString(R.string.default_log_path));
+		mPreferenceWwwPath.setText(Environment.getExternalStorageDirectory()
+				+ getResources().getString(R.string.default_www_path));
+		AccessPreferences.checkWwwPath(Environment
+				.getExternalStorageDirectory()
+				+ getResources().getString(R.string.default_www_path));
+		mPreferenceErrorPath.setText(Environment.getExternalStorageDirectory()
+				+ getResources().getString(R.string.default_error_path));
+		AccessPreferences.checkErrorPath(Environment
+				.getExternalStorageDirectory()
+				+ getResources().getString(R.string.default_error_path));
+		mPreferenceLogPath.setText(Environment.getExternalStorageDirectory()
+				+ getResources().getString(R.string.default_log_path));
+		AccessPreferences.checkLogPath(Environment
+				.getExternalStorageDirectory()
+				+ getResources().getString(R.string.default_log_path));
 		mPreferenceMaxClients.setText(getResources().getString(
 				R.string.default_max_clients));
 		mPreferenceExpirationCache.setText(getResources().getString(
@@ -787,6 +654,9 @@ public class ManagePreferences extends PreferenceActivity {
 		mPreferenceFileIndexing.setChecked(true);
 		mPreferenceLogEntries.setValue(getResources().getString(
 				R.string.default_log_entries));
+		// v0.2
+		mPreferenceAutostartBoot.setChecked(false);
+		mPreferenceAutostartWifi.setChecked(false);
 
 	}
 }

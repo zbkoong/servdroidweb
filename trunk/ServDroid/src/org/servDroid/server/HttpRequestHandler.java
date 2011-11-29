@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +35,7 @@ import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import org.servDroid.db.LogAdapter;
+import org.servDroid.server.service.ServerService;
 import org.servDroid.util.Encoding;
 
 import android.util.Log;
@@ -53,20 +55,13 @@ public class HttpRequestHandler implements Runnable {
 
 	private static final String TAG = "ServDroid";
 
+	private String mServerVersion = null;
+	
 	final static String CRLF = "\r\n";
 
 	private Socket mSocket;
 	private OutputStream mOutput;
 	private BufferedReader mBr;
-
-	private LogAdapter mLogAdapter;
-
-	private String mWwwPath, mErrorPath;
-
-	private Boolean mFileIndexing;
-
-	// After how many minutes a page will expire in the browser cache
-	private int mExpires = 60;
 
 	// SimpleDateFormat is not threadsafe, so we need an instance per thread
 	private DateFormat mHttpDate = new SimpleDateFormat(HTTP_DATE_FORMAT,
@@ -87,21 +82,36 @@ public class HttpRequestHandler implements Runnable {
 		mimeTypes.put("png", "image/png");
 	}
 
-	public HttpRequestHandler(Socket socket, String wwwPath, String errorPath,
-			LogAdapter logAdapter, boolean fileIndexing, int expiresTimeCache)
-			throws Exception {
-		this.mWwwPath = wwwPath;
-		this.mErrorPath = errorPath;
+	/**
+	 * Create the object to manage the request;
+	 * 
+	 * @param socket The socket were the connection is.
+	 * @param serverVersion The server version. This version will be printed in the 
+	 * 		auto generated files (like file indexing)
+	 * @throws Exception
+	 */
+	public HttpRequestHandler(Socket socket, String serverVersion) throws Exception {
 		this.mSocket = socket;
 		this.mOutput = socket.getOutputStream();
 		this.mBr = new BufferedReader(new InputStreamReader(
-				socket.getInputStream()));
-		this.mLogAdapter = logAdapter;
-		this.mErrorPath = errorPath;
-		this.mExpires = expiresTimeCache;
-
-		this.mFileIndexing = fileIndexing;
-
+				socket.getInputStream()), 2 * 1024);
+		this.mServerVersion = serverVersion;
+		
+		if (null == mServerVersion){
+			mServerVersion = "";
+		}else{
+			mServerVersion = "v" + mServerVersion;
+		}
+	}
+	
+	/**
+	 * Create the object to manage the request;
+	 * 
+	 * @param socket The socket were the connection is.
+	 * @throws Exception
+	 */
+	public HttpRequestHandler(Socket socket) throws Exception {
+		this(socket, null);
 	}
 
 	public void run() {
@@ -136,8 +146,9 @@ public class HttpRequestHandler implements Runnable {
 
 			StringTokenizer s = new StringTokenizer(httpRequest);
 			String httpCommand = s.nextToken();
-			String fileGet = s.nextToken();
-			String fileName = Encoding.decodeURL(mWwwPath + fileGet);
+			String fileGet = URLDecoder.decode(s.nextToken());
+			String fileName = URLDecoder.decode(ServerService
+					.getServerParams().getWwwPath() + fileGet);
 
 			// Analyze all HTTP-Request-Headers
 			while (true) {
@@ -237,27 +248,31 @@ public class HttpRequestHandler implements Runnable {
 						responseHeader.put("Content-type:",
 								contentType(file.getName()));
 
-						if (this.mExpires > 0) {
-							responseHeader.put(
-									"Expires:",
-									mHttpDate.format(System.currentTimeMillis()
-											+ (mExpires * 60 * 1000)));
+						if (ServerService.getServerParams().getCacheTime() > 0) {
+							responseHeader
+									.put("Expires:",
+											mHttpDate.format(System
+													.currentTimeMillis()
+													+ (ServerService
+															.getServerParams()
+															.getCacheTime() * 60 * 1000)));
 						}
 					}
 
-				} else if (isDirectory && !fileExists && mFileIndexing) { // Indexing
+				} else if (isDirectory && !fileExists
+						&& ServerService.getServerParams().getFileIndexing()) { // Indexing
 
 					statusLine = "200 OK";
 					responseHeader.put("Content-type:", "text/html");
 
-					FileIndexing fi = new FileIndexing();
-					entityBody = fi.getIndexing(fileName, fileGet);
+					entityBody = FileIndexing.getIndexing(fileName, fileGet, mServerVersion);
 
 					info = "File Indexig";
 
 				} else {
 					try {
-						fileName = mErrorPath + "/404.html";
+						fileName = ServerService.getServerParams()
+								.getErrorPath() + "/404.html";
 						fis = new FileInputStream(fileName);
 						fileExists = true;
 						statusLine = "404 Not Found";
@@ -311,7 +326,8 @@ public class HttpRequestHandler implements Runnable {
 
 			entityBody = "<HTML>" + "<HEAD><title>" + statusLine + "</title>"
 					+ "</head><body>" + "<h1>" + statusLine + "</h1>" + "<p>"
-					+ error + "</p>" + "<hr><address>" + TAG + "</address>"
+					+ error + "</p>" + "<hr><ADDRESS><a href=\"http://code.google.com/p/servdroidweb/\">ServDroid.web " 
+					+ mServerVersion + "</a></ADDRESS>"
 					+ "</BODY></HTML>";
 		}
 
@@ -345,7 +361,7 @@ public class HttpRequestHandler implements Runnable {
 			// no content
 		}
 
-		mLogAdapter.addLog(("" + mSocket.getInetAddress()).replace("/", ""),
+		ServerService.addLog(("" + mSocket.getInetAddress()).replace("/", ""),
 				httpRequest, statusLine, info != null ? info : "");
 
 		try {

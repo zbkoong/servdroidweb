@@ -18,9 +18,10 @@ package org.servDroid;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.servDroid.web.R;
-import org.servDroid.db.LogLocal;
+import org.servDroid.db.LogMessage;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -35,10 +36,10 @@ import android.widget.TextView;
  * @author Joan Puig Sanz
  *
  */
-public class LogListViewAdapter extends ArrayAdapter<LogLocal> {
+public class LogListViewAdapter extends ArrayAdapter<LogMessage> {
 
 	private LayoutInflater mLayoutInflater;
-	private ArrayList<LogLocal> mItems;
+	private List<LogMessage> mItems;
 
 	public LogListViewAdapter(Context context, int textViewResourceId,
 			LayoutInflater layoutInflater) {
@@ -51,7 +52,7 @@ public class LogListViewAdapter extends ArrayAdapter<LogLocal> {
 	 * Set items
 	 * @param items
 	 */
-	public void setItems(ArrayList<LogLocal> items) {
+	public void setItems(List<LogMessage> items) {
 		this.mItems = items;
 
 	}
@@ -61,7 +62,7 @@ public class LogListViewAdapter extends ArrayAdapter<LogLocal> {
 		if (v == null) {
 			v = mLayoutInflater.inflate(R.layout.row_log, null);
 		}
-		LogLocal o = mItems.get(position);
+		LogMessage o = mItems.get(position);
 		if (o != null) {
 
 			TextView tt = (TextView) v.findViewById(R.id.textLog);

@@ -16,10 +16,15 @@
 
 package org.servDroid.util;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 /**
  * 
@@ -61,6 +66,29 @@ public class NetworkIp {
 		int ip = wifiManager.getConnectionInfo().getIpAddress();
 		return (ip & 0xFF) + "." + ((ip >> 8) & 0xFF) + "."
 				+ ((ip >> 16) & 0xFF) + "." + ((ip >> 24) & 0xFF);
-
+	}
+	
+	/**
+	 * Get the IP used for the system. It doesn't matter what interface is being used
+	 * 
+	 * @return The IP of your device
+	 */
+	public static String getLocalIpAddress() {
+		try {
+			for (Enumeration<NetworkInterface> en = NetworkInterface
+					.getNetworkInterfaces(); en.hasMoreElements();) {
+				NetworkInterface intf = en.nextElement();
+				for (Enumeration<InetAddress> enumIpAddr = intf
+						.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+					InetAddress inetAddress = enumIpAddr.nextElement();
+					if (!inetAddress.isLoopbackAddress()) {
+						return inetAddress.getHostAddress().toString();
+					}
+				}
+			}
+		} catch (SocketException ex) {
+			//Log.e(TAG, ex.toString());
+		}
+		return null;
 	}
 }

@@ -95,10 +95,10 @@ public class ServdroidDbAdapter extends Activity {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
 					+ newVersion + ", which will destroy all old data");
-			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_LOG_TABLE_);
-			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_BLACKLIST);
-			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_WHITELIST);
-			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_SETTINGS);
+//			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_LOG_TABLE_);
+//			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_BLACKLIST);
+//			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_WHITELIST);
+//			db.execSQL("DROP TABLE IF EXISTS " + DATABASE_TABLE_SETTINGS);
 			onCreate(db);
 		}
 	}
@@ -138,6 +138,7 @@ public class ServdroidDbAdapter extends Activity {
 	 */
 	public void close() {
 		mDbHelper.close();
+		mDb.close();
 	}
 
 	/**
@@ -157,15 +158,15 @@ public class ServdroidDbAdapter extends Activity {
 	 */
 	public long addIpBlackList(long rowIdLog) {
 
-		Cursor mLogCursor = fetchEntry(rowIdLog);
-		startManagingCursor(mLogCursor);
+		Cursor cursor = fetchEntry(rowIdLog);
+		startManagingCursor(cursor);
 
-		String mIp = mLogCursor.getString(mLogCursor
+		String mIp = cursor.getString(cursor
 				.getColumnIndexOrThrow(ServdroidDbAdapter.KEY_HOSTS));
 
 		// Cursor blackListCursor = fetchEntryBlackList(mIp);
 		// startManagingCursor(blackListCursor);
-
+		cursor.close();
 		return addIpBlackList(mIp);
 
 	}
@@ -187,10 +188,12 @@ public class ServdroidDbAdapter extends Activity {
 			ContentValues initialValues = new ContentValues();
 			initialValues.put(KEY_HOSTS, ip);
 
+			blackListCursor.close();
 			return mDb.insert(DATABASE_TABLE_BLACKLIST, null, initialValues);
 
 		} else {
 			Log.d("servDroid", "IP already in the list");
+			blackListCursor.close();
 			return -2;
 
 		}
@@ -208,15 +211,15 @@ public class ServdroidDbAdapter extends Activity {
 	 */
 	public Cursor fetchEntry(long rowId) throws SQLException {
 
-		Cursor mCursor =
+		Cursor cursor =
 
 		mDb.query(true, DATABASE_LOG_TABLE_, new String[] { KEY_ROWID,
 				KEY_HOSTS, KEY_PATH }, KEY_ROWID + "=" + rowId, null, null,
 				null, null, null);
-		if (mCursor != null) {
-			mCursor.moveToFirst();
+		if (cursor != null) {
+			cursor.moveToFirst();
 		}
-		return mCursor;
+		return cursor;
 
 	}
 

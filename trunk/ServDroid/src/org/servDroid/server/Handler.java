@@ -8,6 +8,12 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+////////////////////////////////////////
+//  This class is not implemented!!   //
+////////////////////////////////////////
+
+
+
 public class Handler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         // check the request method and process if it is a GET

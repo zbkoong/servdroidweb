@@ -16,15 +16,66 @@
 
 package org.servDroid.db;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * 
  * @author Joan Puig Sanz
  * 
  */
-public class LogLocal {
+public class LogMessage implements Parcelable {
 
 	private String mIp, mPath, mInfoBegining, mInfoEnd;
 	private long mTimeStamp;
+
+	public LogMessage(Parcel in) {
+		mIp = in.readString();
+		mPath = in.readString();
+		mInfoBegining = in.readString();
+		mInfoEnd = in.readString();
+		mTimeStamp = in.readLong();
+	}
+
+	public LogMessage() {
+		mIp = "";
+		mPath = "";
+		mInfoBegining = "";
+		mInfoEnd = "";
+	}
+
+	public LogMessage(String ip, String path, String infoBegining,
+			String infoEnd, long timeStamp) {
+		mIp = ip;
+		mPath = path;
+		mInfoBegining = infoBegining;
+		mInfoEnd = infoEnd;
+		mTimeStamp = timeStamp;
+	}
+
+	public void writeToParcel(Parcel out, int flags) { // 3
+		out.writeString(mIp);
+		out.writeString(mPath);
+		out.writeString(mInfoBegining);
+		out.writeString(mInfoEnd);
+		out.writeLong(mTimeStamp);
+	}
+
+	public int describeContents() {
+		return 0;
+	}
+
+	public static final Parcelable.Creator<LogMessage> CREATOR = new Parcelable.Creator<LogMessage>() { // 5
+
+		public LogMessage createFromParcel(Parcel source) {
+			return new LogMessage(source);
+		}
+
+		public LogMessage[] newArray(int size) {
+			return new LogMessage[size];
+		}
+
+	};
 
 	public String getLocalIp() {
 		return mIp;

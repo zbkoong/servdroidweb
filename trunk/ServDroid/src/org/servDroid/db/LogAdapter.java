@@ -18,6 +18,7 @@ package org.servDroid.db;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -30,11 +31,23 @@ import android.database.Cursor;
  */
 public class LogAdapter extends ServdroidDbAdapter {
 
-	public LogAdapter(Context ctx) {
+	private static LogAdapter _instance;
+	private LogAdapter(Context ctx) {
 		super(ctx);
 		if (mDbHelper == null | mDb == null) {
 			open();
 		}
+	}
+	public static LogAdapter initializeInstance(Context ctx){
+		if (null == _instance){
+			_instance = new LogAdapter(ctx);
+		}
+		return _instance;
+	}
+	
+	
+	public static LogAdapter getInstance(){
+		return _instance;
 	}
 
 	/**
@@ -52,7 +65,7 @@ public class LogAdapter extends ServdroidDbAdapter {
 	 *            Additional information to append at the end
 	 * @return rowId or -1 if failed
 	 */
-	public long addLog(String ip, String path, String infoBeginning,
+	public synchronized long addLog(String ip, String path, String infoBeginning,
 			String infoEnd) {
 
 		ContentValues initialValues = new ContentValues();
@@ -64,6 +77,20 @@ public class LogAdapter extends ServdroidDbAdapter {
 		initialValues.put(KEY_INFOEND, infoEnd);
 
 		return mDb.insert(DATABASE_LOG_TABLE_, null, initialValues);
+	}
+	
+	/**
+	 * Create a new log entry using the the IP, request path, some extra
+	 * information. If the log is added successfully return the new rowId for
+	 * that log entry, otherwise return a -1 to indicate failure.
+	 * 
+	 * @param msg
+	 *            The message to be stored in the log
+	
+	 * @return rowId or -1 if failed
+	 */
+	public synchronized long addLog(LogMessage msg) {
+		return addLog(msg.getLocalIp(), msg.getLocalPath(), msg.getLocalInfoBegining(), msg.getLocalInfoEnd());
 	}
 
 	/**
@@ -110,7 +137,7 @@ public class LogAdapter extends ServdroidDbAdapter {
 	 * 
 	 * @return ArrayList with the log entries
 	 */
-	public ArrayList<LogLocal> fetchLogList(int numRows) {
+	public List<LogMessage> fetchLogList(int numRows) {
 		Cursor c = fetchLog(numRows);
 
 		c.moveToFirst();
@@ -121,12 +148,12 @@ public class LogAdapter extends ServdroidDbAdapter {
 		int indexInfoEnd = c.getColumnIndex(KEY_INFOEND);
 
 		int counts = c.getCount();
-		ArrayList<LogLocal> locals = new ArrayList<LogLocal>();
+		ArrayList<LogMessage> locals = new ArrayList<LogMessage>();
 
-		LogLocal log;
+		LogMessage log;
 
 		for (int i = 0; i < counts; i++) {
-			log = new LogLocal();
+			log = new LogMessage();
 			log.setLocalIp(c.getString(indexIp));
 			log.setLocalPath(c.getString(indexPath));
 			log.setLocalTimeStamp(c.getLong(indexTimeStamp));
@@ -135,7 +162,7 @@ public class LogAdapter extends ServdroidDbAdapter {
 			locals.add(log);
 			c.moveToNext();
 		}
-
+		c.close();
 		return locals;
 	}
 
@@ -164,17 +191,17 @@ public class LogAdapter extends ServdroidDbAdapter {
 	 * @return value log line
 	 */
 	public String getLogLine(int id) {
-		Cursor mCursor = mDb.query(true, DATABASE_LOG_TABLE_, new String[] {
+		Cursor c = mDb.query(true, DATABASE_LOG_TABLE_, new String[] {
 				KEY_ROWID, KEY_HOSTS, KEY_PATH, KEY_TIME, KEY_INFOBEGINING,
 				KEY_INFOEND }, KEY_ROWID + " = " + id + "", null, null, null,
 				null, null);
 
-		if (mCursor != null) {
-			mCursor.moveToFirst();
+		if (c != null) {
+			c.moveToFirst();
 		}
 		// startManagingCursor(mCursor);
 
-		if (mCursor.getCount() == 0) {
+		if (c.getCount() == 0) {
 			return "";
 		}
 
@@ -182,16 +209,17 @@ public class LogAdapter extends ServdroidDbAdapter {
 
 		String line = "";
 		line = line
-				+ mCursor.getString(mCursor.getColumnIndexOrThrow(KEY_HOSTS))
+				+ c.getString(c.getColumnIndexOrThrow(KEY_HOSTS))
 				+ " ";
-		timeStamp = new Date(mCursor.getLong(mCursor
+		timeStamp = new Date(c.getLong(c
 				.getColumnIndexOrThrow(KEY_TIME)));
 		line = line + "[" + timeStamp.toGMTString() + "] ";
 
 		line = line + "\""
-				+ mCursor.getString(mCursor.getColumnIndexOrThrow(KEY_PATH))
+				+ c.getString(c.getColumnIndexOrThrow(KEY_PATH))
 				+ "\"";
 
+		c.close();
 		return line;
 
 	}

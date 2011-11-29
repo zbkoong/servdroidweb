@@ -17,39 +17,39 @@
 package org.servDroid;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import org.servDroid.Preference.AccessPreferences;
 import org.servDroid.db.LogAdapter;
-import org.servDroid.db.LogLocal;
+import org.servDroid.db.LogMessage;
 import org.servDroid.db.ServdroidDbAdapter;
 import org.servDroid.web.R;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 /**
  * 
@@ -105,7 +105,7 @@ public class LogViewer extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		mLogHelper = new LogAdapter(this);
+		mLogHelper = LogAdapter.initializeInstance(this);
 
 		setContentView(R.layout.log_list);
 
@@ -156,8 +156,8 @@ public class LogViewer extends ListActivity {
 
 		}
 
-		ArrayList<LogLocal> locals = mLogHelper
-				.fetchLogList(getNumLogEntries());
+		List<LogMessage> locals = mLogHelper
+				.fetchLogList(AccessPreferences.getNumLogEntries());
 
 		mLogListViewAdapter.clear();
 		int size = locals.size();
@@ -271,8 +271,9 @@ public class LogViewer extends ListActivity {
 		String dateChain = dateFormat.format(new Date((new java.util.Date()
 				.getTime())));
 
-		mFile = getLogPath() + "/web_" + dateChain + ".log";
-		mFile = mFile.replace("//", "/");
+		String fileName ="/web_" + dateChain + ".log";
+		mFile = AccessPreferences.getLogPath();
+		
 
 
 		if (mProgressDialog != null) {
@@ -288,7 +289,9 @@ public class LogViewer extends ListActivity {
 		mProgressDialog.show();
 
 		// Run thread for saving
-		ProgressThread progressThread = new ProgressThread(handler, mFile);
+		ProgressThread progressThread = new ProgressThread(handler, mFile, fileName );
+		mFile = mFile + fileName;
+		mFile = mFile.replace("//", "/");
 		progressThread.start();
 
 	}
@@ -296,16 +299,15 @@ public class LogViewer extends ListActivity {
 	/**
 	 * This a private class to create a thread to control the saving process
 	 * 
-	 * @author Joan Puig Sanz
-	 * 
 	 */
 	private class ProgressThread extends Thread {
-		Handler mHandler;
-		String mPath;
+		Handler _handler;
+		String _path, _fileName;
 
-		ProgressThread(Handler h, String p) {
-			mHandler = h;
-			mPath = p;
+		ProgressThread(Handler handler, String folder, String fileName) {
+			_handler = handler;
+			_path = folder;
+			_fileName = fileName;
 		}
 
 		public void run() {
@@ -320,10 +322,15 @@ public class LogViewer extends ListActivity {
 			int indexInfoBegining = c
 					.getColumnIndex(ServdroidDbAdapter.KEY_INFOBEGINING);
 			int indexInfoEnd = c.getColumnIndex(ServdroidDbAdapter.KEY_INFOEND);
+			
+			File folder = new File(_path);
+			if (!folder.exists() || (folder.exists() && !folder.isDirectory())){
+				folder.mkdir();
+			}
 
 			FileWriter fw;
 			try {
-				fw = new FileWriter(mPath);
+				fw = new FileWriter(_path+_fileName);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter pw = new PrintWriter(bw, false);
 				String line, begining, end;
@@ -354,11 +361,11 @@ public class LogViewer extends ListActivity {
 					pw.println(line);
 					c.moveToNext();
 
-					Message msg = mHandler.obtainMessage();
+					Message msg = _handler.obtainMessage();
 					Bundle b = new Bundle();
 					b.putInt("counter", i);
 					msg.setData(b);
-					mHandler.sendMessage(msg);
+					_handler.sendMessage(msg);
 					if (!mProgressDialog.isShowing()) {
 						pw.close();
 						return;
@@ -368,11 +375,11 @@ public class LogViewer extends ListActivity {
 
 				pw.close();
 
-				Message msg = mHandler.obtainMessage();
+				Message msg = _handler.obtainMessage();
 				Bundle b = new Bundle();
 				b.putInt("counter", -1);
 				msg.setData(b);
-				mHandler.sendMessage(msg);
+				_handler.sendMessage(msg);
 
 			} catch (IOException e) {
 
@@ -380,40 +387,6 @@ public class LogViewer extends ListActivity {
 			}
 
 		}
-
-	}
-
-	/**
-	 * Get the number of entries to be displayed through SharedPreferences
-	 * 
-	 * @return Number of entries to be displayed
-	 */
-	private int getNumLogEntries() {
-		SharedPreferences pref = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		String logEntries = pref.getString(getResources().getString(
-				R.string.pref_log_entries_key), getResources().getString(
-				R.string.default_log_entries));
-
-		try {
-			return Integer.parseInt(logEntries);
-		} catch (NumberFormatException e) {
-			return 35;
-		}
-
-	}
-
-	/**
-	 * Get the log path through SharedPreferences
-	 * 
-	 * @return Log path
-	 */
-	private String getLogPath() {
-		SharedPreferences pref = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		return pref.getString(getResources().getString(
-				R.string.pref_log_path_key), Environment.getExternalStorageDirectory() + getResources().getString(
-				R.string.default_log_path));
 
 	}
 
