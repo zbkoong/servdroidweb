@@ -13,6 +13,20 @@
     <activity android:name="org.servDroid.LogViewer"></activity>
 	<activity android:name="org.servDroid.Preference.ManagePreferences"></activity>
 	
+	<service android:name="org.servDroid.server.service.ServerService">
+      <intent-filter>
+        <action android:name="org.servDroid.server.service.ServiceController" />
+       <!-- <action android:name="android.intent.action.BOOT_COMPLETED" />
+   		<category android:name="android.intent.category.LAUNCHER" /> -->
+      </intent-filter>
+	</service>
+	 <receiver android:name="org.servDroid.server.service.AutoStartReceiver" android:label="@string/app_name">
+	   <intent-filter>
+	    <action android:name="android.intent.action.BOOT_COMPLETED" />
+	    <category android:name="android.intent.category.LAUNCHER" />
+	   </intent-filter>
+ 	 </receiver>
+	
 </application>
     <uses-sdk android:minSdkVersion="7" />
 
