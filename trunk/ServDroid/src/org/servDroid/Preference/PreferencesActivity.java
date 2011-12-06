@@ -43,10 +43,10 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -63,6 +63,7 @@ public class PreferencesActivity extends PreferenceActivity {
 	private CheckBoxPreference mPreferenceAutostopWifi;
 	private CheckBoxPreference mPreferenceAutostartBoot;
 	private CheckBoxPreference mPreferenceShowNotification;
+	private CheckBoxPreference mPreferenceShowAds;
 	// /////
 	private EditTextPreference mPreferencePort;
 	private EditTextPreference mPreferenceMaxClients;
@@ -83,6 +84,9 @@ public class PreferencesActivity extends PreferenceActivity {
 	private SharedPreferences mPreferences;
 
 	private boolean mError = false;
+
+	// ///////////////////////
+	// ///////////////////////
 
 	// Handler for the progress bar
 	final Handler handler = new Handler() {
@@ -165,9 +169,11 @@ public class PreferencesActivity extends PreferenceActivity {
 				.getString(R.string.pref_autostart_wifi_key));
 		mPreferenceAutostopWifi = (CheckBoxPreference) findPreference(getResources()
 				.getString(R.string.pref_autostop_wifi_key));
-		
+
 		mPreferenceShowNotification = (CheckBoxPreference) findPreference(getResources()
 				.getString(R.string.pref_show_notification_key));
+		mPreferenceShowAds = (CheckBoxPreference) findPreference(getResources()
+				.getString(R.string.pref_show_ads_key));
 
 		mPreferenceLogEntries = (ListPreference) findPreference(getResources()
 				.getString(R.string.pref_log_entries_key));
@@ -221,7 +227,7 @@ public class PreferencesActivity extends PreferenceActivity {
 						return true;
 					}
 				});
-		
+
 		// Check the port
 		mPreferencePort
 				.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -239,15 +245,18 @@ public class PreferencesActivity extends PreferenceActivity {
 															// rooted
 								if (ShellCommands.isIptablesExist()) {
 									if (!ShellCommands.isDeviceRooted()) {
-										Toast.makeText(PreferencesActivity.this,
+										Toast.makeText(
+												PreferencesActivity.this,
 												R.string.no_su_permissions,
-												Toast.LENGTH_LONG).show();;
+												Toast.LENGTH_LONG).show();
+										;
 										return false;
 									}
 								} else {
 									Toast.makeText(PreferencesActivity.this,
 											R.string.no_iptables,
-											Toast.LENGTH_LONG).show();;
+											Toast.LENGTH_LONG).show();
+									;
 									return false;
 								}
 
@@ -376,6 +385,12 @@ public class PreferencesActivity extends PreferenceActivity {
 					}
 				});
 
+		mPreferenceShowAds.setEnabled(false);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
 	}
 
 	/**
@@ -601,7 +616,7 @@ public class PreferencesActivity extends PreferenceActivity {
 		ab.setPositiveButton(R.string.donate,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
-						donateDialog();
+						ShowDonateDialog();
 					}
 				}).setNegativeButton(android.R.string.ok, null)
 				.setIcon(R.drawable.icon);
@@ -610,20 +625,14 @@ public class PreferencesActivity extends PreferenceActivity {
 
 	}
 
-	private void donateDialog() {
+	private void ShowDonateDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(R.string.donate_info)
 				.setCancelable(true)
-				.setNeutralButton("PayPal",
+				.setPositiveButton(R.string.donate,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								openWebBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GS8EPVN7QZTAN&lc=ES&item_name=ServDroid%2eweb&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted");
-							}
-						})
-				.setPositiveButton("Market",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								openWebBrowser("market://search?q=ServDroid.web donate");
+								openWebBrowser("https://market.android.com/details?id=org.servDroid.web&hl=en");
 							}
 						});
 		builder.setIcon(android.R.drawable.ic_dialog_info);
@@ -728,4 +737,11 @@ public class PreferencesActivity extends PreferenceActivity {
 		// mPreferenceAutostopWifi.setEnabled(false);
 
 	}
+
+	// //////////////////////////////////////////
+	// //////////////////////////////////////////
+	// //////////////////////////////////////////
+	// //////////////////////////////////////////
+	// //////////////////////////////////////////
+
 }

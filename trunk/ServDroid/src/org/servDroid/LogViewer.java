@@ -133,11 +133,10 @@ public class LogViewer extends ListActivity {
 	 * Finalise the saving log process
 	 */
 	private void finalizeSavingLog() {
-		Toast
-				.makeText(
-						this,
-						this.getResources().getString(R.string.log_saved) + " "
-								+ mFile, Toast.LENGTH_LONG).show();
+		Toast.makeText(
+				this,
+				this.getResources().getString(R.string.log_saved) + " " + mFile,
+				Toast.LENGTH_LONG).show();
 	}
 
 	/**
@@ -155,8 +154,8 @@ public class LogViewer extends ListActivity {
 
 		}
 
-		List<LogMessage> locals = mLogHelper
-				.fetchLogList(AccessPreferences.getNumLogEntries());
+		List<LogMessage> locals = mLogHelper.fetchLogList(AccessPreferences
+				.getNumLogEntries());
 
 		mLogListViewAdapter.clear();
 		int size = locals.size();
@@ -221,7 +220,7 @@ public class LogViewer extends ListActivity {
 		menu.add(0, PURGE_ID, 0, R.string.menu_delete_all).setIcon(
 				android.R.drawable.ic_menu_delete);
 		menu.add(0, REFRSH_LOG, 0, R.string.menu_refresh_log).setIcon(
-				R.drawable.refresh);
+				android.R.drawable.ic_menu_rotate);
 		// menu.add(0, SEE_STATICS_ID, 0,
 		// R.string.menu_statics).setIcon(R.drawable.analitics);
 		return true;
@@ -271,10 +270,8 @@ public class LogViewer extends ListActivity {
 		String dateChain = dateFormat.format(new Date((new java.util.Date()
 				.getTime())));
 
-		String fileName ="/web_" + dateChain + ".log";
+		String fileName = "/web_" + dateChain + ".log";
 		mFile = AccessPreferences.getLogPath();
-		
-
 
 		if (mProgressDialog != null) {
 			mProgressDialog.dismiss();
@@ -289,7 +286,8 @@ public class LogViewer extends ListActivity {
 		mProgressDialog.show();
 
 		// Run thread for saving
-		ProgressThread progressThread = new ProgressThread(handler, mFile, fileName );
+		ProgressThread progressThread = new ProgressThread(handler, mFile,
+				fileName);
 		mFile = mFile + fileName;
 		mFile = mFile.replace("//", "/");
 		progressThread.start();
@@ -322,43 +320,27 @@ public class LogViewer extends ListActivity {
 			int indexInfoBegining = c
 					.getColumnIndex(ServdroidDbAdapter.KEY_INFOBEGINING);
 			int indexInfoEnd = c.getColumnIndex(ServdroidDbAdapter.KEY_INFOEND);
-			
+
 			File folder = new File(_path);
-			if (!folder.exists() || (folder.exists() && !folder.isDirectory())){
+			if (!folder.exists() || (folder.exists() && !folder.isDirectory())) {
 				folder.mkdir();
 			}
 
 			FileWriter fw;
 			try {
-				fw = new FileWriter(_path+_fileName);
+				fw = new FileWriter(_path + _fileName);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter pw = new PrintWriter(bw, false);
-				String line, begining, end;
-				Date timeStamp;
 				for (int i = 0; i < counts; i++) {
 
-					line = "";
+					LogMessage tmp = new LogMessage(c.getString(indexIp),
+							c.getString(indexPath),
+							c.getString(indexInfoBegining),
+							c.getString(indexInfoEnd),
+							c.getLong(indexTimeStamp));
 
-					begining = c.getString(indexInfoBegining);
+					pw.println(tmp.toString());
 
-					if (!begining.equals("") || begining == null) {
-						line = line + "[" + begining + "] ";
-					}
-
-					line = line + c.getString(indexIp) + " ";
-
-					timeStamp = new Date(c.getLong(indexTimeStamp));
-
-					line = line + "[" + timeStamp.toGMTString() + "] ";
-
-					line = line + "\"" + c.getString(indexPath) + "\"";
-
-					end = c.getString(indexInfoEnd);
-
-					if (!end.equals("") || begining == null) {
-						line = line + " -- " + end + "";
-					}
-					pw.println(line);
 					c.moveToNext();
 
 					Message msg = _handler.obtainMessage();

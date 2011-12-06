@@ -161,6 +161,18 @@ public class AccessPreferences {
 				mContext.getResources().getString(
 						R.string.pref_autostart_boot_key), false);
 	}
+	
+	public static final boolean getShowAds() {
+		if (null == mContext) {
+			return false;
+		}
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(mContext);
+		return pref.getBoolean(
+				mContext.getResources().getString(R.string.pref_show_ads_key),
+				false);
+	}
+
 
 	/**
 	 * Get server expiration cache for the browsers through SharedPreferences

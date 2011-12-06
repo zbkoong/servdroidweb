@@ -25,6 +25,7 @@ import org.servDroid.db.ServdroidDbAdapter;
 import org.servDroid.server.service.ServerService;
 import org.servDroid.server.service.ServiceController;
 import org.servDroid.util.NetworkIp;
+import org.servDroid.web.AdFrame;
 import org.servDroid.web.R;
 
 import android.app.AlertDialog;
@@ -49,6 +50,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -88,6 +91,7 @@ public class ServDroid extends ListActivity {
 
 	private ToggleButton mStartStopButton;
 	private TextView mTexStat, mTexServerInfo;
+	private ViewGroup mMainViewGrou;
 
 	// The service for the server
 	private static ServerConnection mConnection;
@@ -104,10 +108,14 @@ public class ServDroid extends ListActivity {
 
 	private static WifiManager mWifiManager;
 
-	List<LogMessage> oldLogMsg;
+	private static List<LogMessage> oldLogMsg;
 
 	// private static boolean mExit;
 	private static boolean mAppKilled = false;
+
+	private LinearLayout adMobLayout;
+
+	private static int mportInUse;
 
 	// This is the handler for the thread which refreshes the log screen
 	final Handler mServDroidHandler = new Handler() {
@@ -189,6 +197,12 @@ public class ServDroid extends ListActivity {
 			}
 		}
 		startRefreshThread();
+
+		// ///////////////////////////////
+		adMobLayout = (LinearLayout) findViewById(R.id.adMobLayout);
+		AdFrame.load(adMobLayout, this);
+		mMainViewGrou.invalidate();
+		// ///////////////////////////////
 		super.onResume();
 	}
 
@@ -210,7 +224,7 @@ public class ServDroid extends ListActivity {
 		if (mAppKilled) {
 			finish();
 		}
-		
+
 		AccessPreferences.setContext(getApplicationContext());
 		mVersion = this.getResources().getString(R.string.version);
 
@@ -224,6 +238,8 @@ public class ServDroid extends ListActivity {
 		mStartStopButton = (ToggleButton) findViewById(R.id.startstop);
 		mTexStat = (TextView) findViewById(R.id.textStat);
 		mTexServerInfo = (TextView) findViewById(R.id.textServerInfo);
+
+		mMainViewGrou = (ViewGroup) findViewById(R.id.mainLayout);
 
 		if (null == mWifiManager) {
 			mWifiManager = (WifiManager) this
@@ -273,7 +289,7 @@ public class ServDroid extends ListActivity {
 		mStartStopButton.setChecked(true);
 		mTexServerInfo.setText("IP: " + NetworkIp.getLocalIpAddress() + " "
 				+ getResources().getString(R.string.text_port) + ": "
-				+ AccessPreferences.getPort());
+				+ mportInUse);
 		mTexStat.setText(R.string.text_running);
 	}
 
@@ -356,7 +372,7 @@ public class ServDroid extends ListActivity {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 
-								donateDialog();
+								ShowDonateDialog();
 							}
 						})
 				.setNeutralButton(android.R.string.ok,
@@ -372,20 +388,15 @@ public class ServDroid extends ListActivity {
 		builder.show();
 	}
 
-	private void donateDialog() {
+	private void ShowDonateDialog() {
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(R.string.donate_info)
 				.setCancelable(true)
-				.setNeutralButton("PayPal",
+				.setPositiveButton(R.string.donate,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								openWebBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=GS8EPVN7QZTAN&lc=ES&item_name=ServDroid%2eweb&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted");
-							}
-						})
-				.setPositiveButton("Market",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								openWebBrowser("market://search?q=ServDroid.web donate");
+								openWebBrowser("https://market.android.com/details?id=org.servDroid.web&hl=en");
 							}
 						});
 		builder.setIcon(android.R.drawable.ic_dialog_info);
@@ -420,7 +431,8 @@ public class ServDroid extends ListActivity {
 			if (locals == null) {
 				return;
 			}
-			if (!force && oldLogMsg != null && (oldLogMsg.size() == locals.size())) {
+			if (!force && oldLogMsg != null
+					&& (oldLogMsg.size() == locals.size())) {
 				// Don't update the log
 				return;
 			}
@@ -442,13 +454,13 @@ public class ServDroid extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		menu.add(0, SEE_LOG_ID, 0, R.string.menu_log).setIcon(
-				android.R.drawable.ic_menu_info_details);
+				android.R.drawable.ic_menu_edit);
 
 		menu.add(0, SETTINGS_ID, 0, R.string.menu_preferences).setIcon(
 				android.R.drawable.ic_menu_preferences);
 
 		menu.add(0, REFRSH_LOG, 0, R.string.menu_refresh_log).setIcon(
-				R.drawable.refresh);
+				android.R.drawable.ic_menu_rotate);
 
 		// TODO Not implemented yet
 		// menu.add(0, SEE_STATICS_ID, 0, R.string.menu_statics).setIcon(
@@ -566,7 +578,7 @@ public class ServDroid extends ListActivity {
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
-		fillData(true);
+		//fillData(true);
 	}
 
 	/**
@@ -586,6 +598,7 @@ public class ServDroid extends ListActivity {
 			}
 		}
 		try {
+			mportInUse = AccessPreferences.getPort();
 			if (!mServiceController.startService(AccessPreferences
 					.getServerParameters())) {
 				return false;
@@ -733,4 +746,11 @@ public class ServDroid extends ListActivity {
 	public static final String getVersion() {
 		return mVersion;
 	}
+
+	// //////////////////////////////////////////
+	// //////////////////////////////////////////
+	// //////////////////////////////////////////
+	// //////////////////////////////////////////
+	// //////////////////////////////////////////
+
 }

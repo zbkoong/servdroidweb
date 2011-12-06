@@ -167,6 +167,7 @@ public class ServdroidDbAdapter extends Activity {
 		// Cursor blackListCursor = fetchEntryBlackList(mIp);
 		// startManagingCursor(blackListCursor);
 		cursor.close();
+		stopManagingCursor(cursor);
 		return addIpBlackList(mIp);
 
 	}
@@ -189,11 +190,13 @@ public class ServdroidDbAdapter extends Activity {
 			initialValues.put(KEY_HOSTS, ip);
 
 			blackListCursor.close();
+			stopManagingCursor(blackListCursor);
 			return mDb.insert(DATABASE_TABLE_BLACKLIST, null, initialValues);
 
 		} else {
 			Log.d("servDroid", "IP already in the list");
 			blackListCursor.close();
+			stopManagingCursor(blackListCursor);
 			return -2;
 
 		}

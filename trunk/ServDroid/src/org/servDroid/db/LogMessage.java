@@ -148,5 +148,5 @@ public class LogMessage implements Parcelable {
 		}
 		return line;
 	}
-
+	
 }
