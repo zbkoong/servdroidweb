@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+	<LinearLayout android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="3dip">
+
+		<TextView android:layout_width="wrap_content"
+			android:id="@+id/textStatus"
+			android:layout_height="wrap_content" 
+			android:text="@string/text_status" />
+		
+		<TextView android:text=""
+			android:id="@+id/textStat"
+			android:padding="3dip"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+			
+		<RelativeLayout android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+		
+			<ToggleButton 
+				android:id="@+id/startstop"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentRight="true"
+				/>
+		</RelativeLayout>
+	</LinearLayout>
+	
+	<LinearLayout android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="3dip">
+		<TextView android:layout_width="wrap_content"
+			android:id="@+id/textServerIp"
+			android:layout_height="wrap_content" 
+			android:text="@string/text_server_info" />
+		
+		<TextView android:text=""
+			android:id="@+id/textServerInfo"
+			android:padding="3dip"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"/>
+		
+	</LinearLayout>
+	
+	<LinearLayout
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content">
+	  	  <TableLayout 
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:stretchColumns="0">
+		 <View
+		        android:layout_height="2dip"
+		        android:background="#FF909090" />
+		   	 <TableRow>
+		       
+		        <TextView
+		            android:text="@string/server_log"
+		            android:gravity="center"
+		            android:padding="3dip" />
+
+		    </TableRow>
+
+		    <View
+		        android:layout_height="2dip"
+		        android:background="#FF909090" />
+
+		</TableLayout>
+		</LinearLayout>
+		<LinearLayout
+    	android:layout_width="wrap_content"
+    	android:layout_height="wrap_content">
+    
+		    <ListView android:id="@+id/android:list"
+		          android:layout_width="wrap_content"
+		        	android:layout_height="wrap_content"/>
+		        	
+		  	<TextView android:id="@+id/android:empty"
+		          android:layout_width="wrap_content"
+		        	android:layout_height="wrap_content"
+		        	android:text="@string/no_visits"/>
+		</LinearLayout>
+		
+	
+	
+</LinearLayout>

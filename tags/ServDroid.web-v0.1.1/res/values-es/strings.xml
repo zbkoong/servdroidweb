@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">ServDroid.Web</string>
+	<string name="text_start">Iniciar</string>
+	<string name="text_starting">Iniciando servidor web...</string>
+	<string name="text_stopping">Parando servidor web...</string>
+	<string name="text_running">Corriendo</string>
+	<string name="text_stopped">Detenido</string>
+	<string name="text_port">Puerto</string>
+	<string name="text_status">Estado:</string>
+	<string name="no_visits">Sin entradas</string>
+	<string name="no_hosts">Sin hosts</string>
+	<string name="server_ip">IP servidor:</string>
+	<string name="table_ip">IP</string>
+	<string name="table_path">Ruta</string>
+	<string name="table_time">Tiempo</string>
+	<string name="text_server_info">Información del servidor:</string>
+	<string name="text_server_info_no_network">No estás conectado</string>
+	<string name="text_server_info_no_wifi">No estás conectado a ninguna red Wi-Fi</string>
+
+
+	<string name="menu_preferences">Preferencias</string>
+	<string name="menu_log">Mostrar registros</string>
+	<string name="menu_refresh_log">Refrescar registros</string>
+	<string name="menu_open_browser">Abrir navegador web</string>
+	<string name="menu_statics">Estadísticas</string>
+	<string name="menu_save_log">Volcar a un fichero</string>
+
+	<string name="menu_show_more_info">Mostrar más información</string>
+	<string name="menu_delete">Eliminar entrada</string>
+	<string name="menu_delete_all">Eliminar todas las entradas</string>
+	<string name="menu_clear_list">Limpiar lista</string>
+	<string name="menu_add_black_list">Añadir IP a la lista negra</string>
+	<string name="menu_add_white_list">Añadir IP a la lista blanca</string>
+
+	<string name="enable">Habilitar</string>
+	<string name="disable">Deshabilitar</string>
+	<string name="enabled">Habilitado</string>
+	<string name="disabled">Deshabilitado</string>
+
+	<string name="settings_port">Puerto</string>
+	<string name="settings_max_clients">Clientes máximos</string>
+	<string name="settings_password">Contraseña</string>
+	<string name="settings_white_list">Lista blanca</string>
+	<string name="settings_black_list">Lista negra</string>
+	<string name="settings_www_path">Ruta de los documentos web</string>
+	<string name="settings_error_page">Ruta de los documentos de error</string>
+	<string name="settings_log_path">Ruta donde guardar los registros</string>
+	<string name="settings_cookies">Alguna cookie?</string>
+	<string name="settings_vibrate">Activar vibración</string>
+	<string name="settings_reset_settings">Restaurar preferencias</string>
+	<string name="settings_saved">Preferencias guardadas</string>
+
+	<string name="accept">Aceptar</string>
+	<string name="cancel">Cancelar</string>
+	<string name="add_host">Añadir IP</string>
+	<string name="remove_host">Eliminar host</string>
+	<string name="remove">Eliminar</string>
+
+	<string name="server_log">Registros del servidor</string>
+	<string name="log_saved">Los registros se han guardado en</string>
+	<string name="log_not_saved">Error guardando los registros</string>
+
+	<string name="error_stopping_process">ERROR parando el proceso</string>
+	<string name="error_starting_process">ERROR iniciando el proceso</string>
+	
+	
+
+	
+	<string name="saving_log_progress">Guardando los registros...</string>
+	<string name="no_log_entries">NO se han encontrado registros</string>
+	<string name="log_info_1">Mostrando </string>
+	<string name="log_info_2">registros.</string>
+	
+	<string name="press_back_button">Presiona de nuevo para salir y parar el servidor</string>
+
+</resources>

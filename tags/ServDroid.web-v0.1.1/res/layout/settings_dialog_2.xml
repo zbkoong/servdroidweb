@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	android:id="@+id/dialog"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	>
+	<TextView
+		android:id="@+id/dialogTitle"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		/>
+	<EditText
+		android:id="@+id/dialogInputText"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textSize="18sp"/>
+		<LinearLayout
+		android:id="@+id/dialogButtonLayout"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center">
+		<Button
+			android:layout_gravity="center"
+			android:id="@+id/dialogAddHost"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/add_host"/>
+		<Button
+			android:layout_gravity="center"
+			android:id="@+id/dialogRemoveHost"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/remove_host"/>
+	</LinearLayout>
+	<LinearLayout
+		android:id="@+id/dialogEnableLayout"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal">
+		
+		<TextView 
+			android:id="@+id/dialogTextenable"
+			android:paddingTop="10dip"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/enable"/>
+			
+		<RelativeLayout android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+		
+			<CheckBox 
+			android:id="@+id/dialogCheckBox"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"/>
+		</RelativeLayout>
+		</LinearLayout>
+		
+		<ListView android:id="@+id/android:list"
+		            android:layout_width="wrap_content"
+		        	android:layout_height="wrap_content"/>
+		        	
+		 <TextView android:id="@+id/android:empty"
+					android:layout_width="wrap_content"
+		        	android:layout_height="wrap_content"
+		        	android:text="@string/no_hosts"/>
+
+	
+	
+	<LinearLayout
+		android:id="@+id/dialogButtonLayout"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center">
+		<Button
+			android:layout_gravity="center"
+			android:id="@+id/dialogOkButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/accept"/>
+		<Button
+			android:id="@+id/dialogCancelButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/cancel"/>
+	</LinearLayout>
+</LinearLayout>
