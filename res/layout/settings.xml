@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+	
+	<RelativeLayout android:layout_width="fill_parent"
+		android:layout_height="fill_parent">
+		
+	<TextView 
+			android:id="@+id/textPort"
+			android:paddingTop="10dip"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/settings_port"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+        
+    <EditText
+			android:id="@+id/inputPort"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="18sp"
+			android:inputType="numberDecimal"
+			android:layout_toRightOf="@+id/textPort"
+        	android:layout_alignTop="@+id/textPort" 
+			android:ems="6"/>
+     
+     
+     <TextView 
+			android:id="@+id/textMaxClients"
+			android:paddingTop="10dip"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/inputPort"
+			android:text="@string/settings_max_clients"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+		<EditText
+			android:id="@+id/inputMaxClients"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textSize="18sp"
+			android:inputType="numberDecimal"
+			android:layout_toRightOf="@+id/textMaxClients"
+     	    android:layout_alignTop="@+id/textMaxClients" 
+			android:ems="6"/>
+			
+		<TextView
+			android:id="@+id/textWwwPath"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/inputMaxClients"
+			android:text="@string/settings_www_path"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+		
+		<EditText
+			android:id="@+id/inputWwwPath"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/textWwwPath"
+			android:textSize="18sp"/>
+     
+   	  <TextView
+			android:id="@+id/textErrorPage"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/settings_error_page"
+			android:layout_below="@+id/inputWwwPath"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+		
+	<EditText
+			android:id="@+id/inputErrorPage"
+			android:layout_below="@+id/textErrorPage"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:textSize="18sp"/>
+   	 
+   	  <TextView
+			android:id="@+id/textLogPath"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/settings_log_path"
+			android:layout_below="@+id/inputErrorPage"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+		
+	<EditText
+			android:id="@+id/inputlogPath"
+			android:layout_below="@+id/textLogPath"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:textSize="18sp"/>			
+			
+			
+			
+	<TextView 
+			android:id="@+id/textVibrate"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/inputlogPath"
+			android:text="@string/settings_vibrate"
+			android:textAppearance="?android:attr/textAppearanceLarge"/>
+		
+	<CheckBox 
+			android:id="@+id/checkBoxVibrate"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_toRightOf="@+id/textVibrate"
+			android:layout_alignTop="@+id/textVibrate"/>
+
+	<RelativeLayout
+		android:id="@+id/dialogButtonLayout"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/checkBoxVibrate"
+		android:paddingTop="4dip"
+		android:gravity="center">
+		<Button
+			android:id="@+id/settingsAcceptButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/checkBoxVibrate"
+			android:text="@string/accept"/>
+   
+  		 <Button
+   			android:layout_below="@+id/inputErrorPage"
+			android:id="@+id/settingsCancelButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@+id/settingsAcceptButton"
+			android:text="@string/cancel"/>
+		<Button
+   			android:layout_below="@+id/inputErrorPage"
+			android:id="@+id/settingsResetSettings"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@+id/settingsCancelButton"
+			android:text="@string/settings_reset_settings"/>
+	</RelativeLayout>
+	
+</RelativeLayout>
+
+</ScrollView>

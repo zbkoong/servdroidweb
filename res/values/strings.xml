@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">ServDroid.Web</string>
+	<string name="text_start">Start</string>
+	<string name="text_starting">Starting Web Server...</string>
+	<string name="text_stopping">Stopping Web Server...</string>
+	<string name="text_running">Running</string>
+	<string name="text_stopped">Stopped</string>
+	<string name="text_port">Port</string>
+	<string name="text_status">Status:</string>
+	<string name="no_visits">No entries</string>
+	<string name="no_hosts">No hosts</string>
+	<string name="server_ip">Server IP:</string>
+	<string name="table_ip">IP</string>
+	<string name="table_path">Path</string>
+	<string name="table_time">Time</string>
+	<string name="text_server_info">Server information:</string>
+	<string name="text_server_info_no_network">You are not connected</string>
+	<string name="text_server_info_no_wifi">You are not connected to a Wi-Fi network</string>
+
+
+	<string name="menu_preferences">Settings</string>
+	<string name="menu_log">Show log</string>
+	<string name="menu_refresh_log">Refresh log</string>
+	<string name="menu_open_browser">Open web browser</string>
+	<string name="menu_statics">Statistics</string>
+	<string name="menu_save_log">Dump to file</string>
+
+	<string name="menu_show_more_info">Show more information</string>
+	<string name="menu_delete">Delete entry</string>
+	<string name="menu_delete_all">Delete all entries</string>
+	<string name="menu_clear_list">Clear list</string>
+	<string name="menu_add_black_list">Add IP to blacklist</string>
+	<string name="menu_add_white_list">Add IP to whitelist</string>
+
+	<string name="enable">Enable</string>
+	<string name="disable">Disable</string>
+	<string name="enabled">Enabled</string>
+	<string name="disabled">Disabled</string>
+
+	<string name="settings_port">Port</string>
+	<string name="settings_max_clients">Max clients</string>
+	<string name="settings_password">Password</string>
+	<string name="settings_white_list">Whitelist</string>
+	<string name="settings_black_list">Blacklist</string>
+	<string name="settings_www_path">Document path</string>
+	<string name="settings_error_page">Default error document path</string>
+	<string name="settings_log_path">Default log path</string>
+	<string name="settings_cookies">Any cookie?</string>
+	<string name="settings_vibrate">Enable vibration</string>
+	<string name="settings_reset_settings">Reset settings</string>
+	<string name="settings_saved">Settings saved</string>
+
+	<string name="accept">Accept</string>
+	<string name="cancel">Cancel</string>
+	<string name="add_host">Add IP</string>
+	<string name="remove_host">Remove host</string>
+	<string name="remove">Remove</string>
+
+	<string name="server_log">Server Log</string>
+	<string name="log_saved">Log file has been saved in</string>
+	<string name="log_not_saved">Error saving log file</string>
+
+	<string name="error_stopping_process">ERROR stopping the process</string>
+	<string name="error_starting_process">ERROR starting the process</string>
+	
+	
+
+	
+	<string name="saving_log_progress">Saving log...</string>
+	<string name="no_log_entries">No log entries found</string>
+	<string name="log_info_1">Displaying </string>
+	<string name="log_info_2">entries.</string>
+	
+	<string name="press_back_button">Press again to exit and stop the server</string>
+
+</resources>
