@@ -48,7 +48,7 @@ import android.os.Vibrator;
 import android.util.Log;
 
 public class ServerService extends Service implements ServerValues {
-	
+
 	private static final String TAG = ServDroid.TAG;
 	private static String mVersion;
 	private static final int START_NOTIFICATION_ID = 1;
@@ -143,7 +143,6 @@ public class ServerService extends Service implements ServerValues {
 	@Override
 	public IBinder onBind(Intent intent) {
 		mAutostartOnBoot = 2;// the BroadcastRecivers can't bind a service
-
 
 		// Bundle bundle = intent.getExtras();
 		// if (null != bundle) {
@@ -447,7 +446,7 @@ public class ServerService extends Service implements ServerValues {
 		}
 
 		public synchronized void stopThread() {
-			if (null != mWl) {
+			if (null != mWl && mWl.isHeld()) {
 				mWl.release();
 			}
 			if (mRun == false) {
@@ -469,9 +468,13 @@ public class ServerService extends Service implements ServerValues {
 		public void run() {
 
 			try {
-				WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-				mWl = manager.createWifiLock("wifilock");
-				mWl.acquire();
+				if (mWl == null && !mWl.isHeld()) {
+					WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+					mWl = manager.createWifiLock(WifiManager.WIFI_MODE_FULL,
+							"servdroid_wifilock");
+					mWl.setReferenceCounted(false);
+					mWl.acquire();
+				}
 			} catch (Exception e) {
 			}
 
