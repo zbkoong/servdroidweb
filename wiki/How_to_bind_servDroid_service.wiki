@@ -5,7 +5,7 @@
 
 If you have an application which needs to manage a web server you can use the ServDroid.Web for this purpose.
 
-This wiki shows how to connect to the ServDroid.web service using your code.
+This wiki shows how to bind the ServDroid.web service from your code.
 
 Note that this is only possible for the ServDroid v0.2.3 and above.
 
