@@ -39,6 +39,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -46,8 +47,8 @@ import android.os.RemoteException;
 import android.os.Vibrator;
 import android.util.Log;
 
-public class ServerService extends Service {
-
+public class ServerService extends Service implements ServerValues {
+	
 	private static final String TAG = ServDroid.TAG;
 	private static String mVersion;
 	private static final int START_NOTIFICATION_ID = 1;
@@ -55,11 +56,6 @@ public class ServerService extends Service {
 	private static final int VIBRATE_IDENTIFIER = 0x102;
 	private static final int SERVER_STARTED_IDENTIFIER = 0x102 + 1;
 	private static final int SERVER_STOPED_IDENTIFIER = 0x102 + 2;
-
-	/** The Server is running */
-	public static final int STATUS_RUNNING = 5435;
-	/** The Server is stopped */
-	public static final int STATUS_STOPED = 5435 + 1;
 
 	/**
 	 * This is the default port opened when the user ask for opening a port
@@ -93,7 +89,7 @@ public class ServerService extends Service {
 
 	private static NotificationManager mNotificationManager;
 
-	private BroadcastReceiver wifiStateChangedReceiver;
+	private static BroadcastReceiver wifiStateChangedReceiver;
 
 	final Handler mServiceHandler = new Handler() {
 		@Override
@@ -148,6 +144,7 @@ public class ServerService extends Service {
 	public IBinder onBind(Intent intent) {
 		mAutostartOnBoot = 2;// the BroadcastRecivers can't bind a service
 
+
 		// Bundle bundle = intent.getExtras();
 		// if (null != bundle) {
 		// mSharedKey = bundle.getString(SERVICE_SHARED_KEY);
@@ -159,14 +156,6 @@ public class ServerService extends Service {
 		}
 
 		return new ServiceController.Stub() {
-			// String sharedKey = null;
-
-			// @Override
-			// public void setSecurityKey(String sharedKey) throws
-			// RemoteException {
-			// this.sharedKey = sharedKey;
-			// }
-
 			@Override
 			public boolean startService(ServerParams params)
 					throws RemoteException {
@@ -187,7 +176,6 @@ public class ServerService extends Service {
 					stopServer();
 				}
 				return startServer();
-
 			}
 
 			@Override
@@ -212,12 +200,22 @@ public class ServerService extends Service {
 
 			@Override
 			public long addLog(LogMessage msg) throws RemoteException {
-				return addLog(msg);
+				return ServerService.addLog(msg);
 			}
 
 			@Override
 			public List<LogMessage> getLogList(int n) throws RemoteException {
 				return mLogAdapter.fetchLogList(n);
+			}
+
+			@Override
+			public ServerParams getCurrentParams() throws RemoteException {
+				return mParams;
+			}
+
+			@Override
+			public int getDefaultPortOnRoot() throws RemoteException {
+				return DEFAULT_PORT_ON_ROOT;
 			}
 
 		};
@@ -416,11 +414,11 @@ public class ServerService extends Service {
 		mLogAdapter.addLog(ip, path);
 	}
 
-	public static void addLog(LogMessage msg) {
+	public static long addLog(LogMessage msg) {
 		if (null == mLogAdapter) {
-			return;
+			return -1;
 		}
-		mLogAdapter.addLog(msg);
+		return mLogAdapter.addLog(msg);
 	}
 
 	/**
@@ -441,17 +439,21 @@ public class ServerService extends Service {
 	 */
 	private class MainServerThread extends Thread {
 
-		private volatile boolean run;
+		private volatile boolean mRun;
+		private WifiLock mWl;
 
 		public MainServerThread() {
-			run = true;
+			mRun = true;
 		}
 
 		public synchronized void stopThread() {
-			if (run == false) {
+			if (null != mWl) {
+				mWl.release();
+			}
+			if (mRun == false) {
 				return;
 			}
-			run = false;
+			mRun = false;
 			if (mServerSocket == null) {
 				return;
 			}
@@ -461,9 +463,17 @@ public class ServerService extends Service {
 				Log.e(TAG, "Error stoping server thread: ", e);
 				e.printStackTrace();
 			}
+
 		}
 
 		public void run() {
+
+			try {
+				WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+				mWl = manager.createWifiLock("wifilock");
+				mWl.acquire();
+			} catch (Exception e) {
+			}
 
 			mCurrentPort = mParams.getPort();
 			mLogPort = "" + mCurrentPort;
@@ -503,11 +513,14 @@ public class ServerService extends Service {
 
 				m.what = ServerService.SERVER_STARTED_IDENTIFIER;
 				mServiceHandler.sendMessage(m);
-				addLog("", "", "", "ServDroid.web server running on port "
-						+ mLogPort);
+				addLog("", "", "", "ServDroid.web server running on port: "
+						+ mLogPort + " | WWW path: " + mParams.getWwwPath()
+						+ " | Error path: " + mParams.getErrorPath()
+						+ " | Max clients: " + mParams.getMaxClients()
+						+ " | File indexing: " + mParams.isFileIndexing());
 				Log.d(TAG, "ServDroid.web server running on port " + mLogPort);
 			} catch (IOException e) {
-				if (run) {
+				if (mRun) {
 					Log.e(TAG, "Error accepting connections: ", e);
 				}
 				addLog("", "", "",
@@ -523,12 +536,12 @@ public class ServerService extends Service {
 				return;
 			}
 
-			while (run) {
+			while (mRun) {
 				Socket socket;
 				try {
 					socket = mServerSocket.accept();
 				} catch (IOException e1) {
-					if (run) {
+					if (mRun) {
 						addLog("", "", "",
 								"Warning! One connection has been droped! "
 										+ mParams.getPort());

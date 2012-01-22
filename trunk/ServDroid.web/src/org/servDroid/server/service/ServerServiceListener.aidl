@@ -16,7 +16,6 @@ package org.servDroid.server.service;
  */ 
 
 import org.servDroid.server.service.params.ServerParams;
-import org.servDroid.db.LogMessage;
 
 import java.util.List;
 

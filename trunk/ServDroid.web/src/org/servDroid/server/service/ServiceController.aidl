@@ -61,14 +61,38 @@ interface ServiceController {
 	
 	/**
 	 * Get the status of the server:<br>
-	 * {@link ServerService.STATUS_RUNNING} The server is running <br>
-	 * {@link ServerService.STATUS_STOPED} The server is stopped <br>
+	 * {@link ServerValues.STATUS_RUNNING} The server is running <br>
+	 * {@link ServerValues.STATUS_STOPED} The server is stopped <br>
 	 *
 	 * @return True if the server has been initialized, false otherwise
 	 */
 	int getStatus();
 	
+	
+	/**
+	 * Get the parameters in use by the server.
+	 * @return The  {@link ServerParams} in use for the server
+	 */
+	ServerParams getCurrentParams();
+	
+	 /**
+	 * This is the default port opened when the user ask for opening a port
+	 * under 1024. <br>
+	 * The system will try to use iptables like this:<br>
+	 * iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port
+	 * DEFAULT_PORT_ON_ROOT
+	 * @return The default port when the root permissions are required.
+	 */
+	int getDefaultPortOnRoot();
+	
+	/**
+	 * Use this function to enable and disable the vibrations
+	 * when a request is received.
+	 * @param params 
+	 *   True to vibrate if a petition is accepted, false otherwise.
+	 */
 	void setVibrate(in boolean vibrate);
+	
 	/**
 	 * Get the servDroid software version
 	 * @return The ServDroid.web version
@@ -76,7 +100,7 @@ interface ServiceController {
 	String getVersion();
 	
 	/**
-	 * Create a new log entry using the the IP, request path, some extra
+	 * Create a new log entry using the the IP, request path and some extra
 	 * information. If the log is added successfully return the new rowId for
 	 * that log entry, otherwise return a -1 to indicate failure.
 	 * 

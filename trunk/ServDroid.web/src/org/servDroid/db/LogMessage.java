@@ -79,43 +79,43 @@ public class LogMessage implements Parcelable {
 
 	};
 
-	public String getLocalIp() {
+	public String getIp() {
 		return mIp;
 	}
 
-	public void setLocalIp(String ip) {
+	public void setIp(String ip) {
 		this.mIp = ip;
 	}
 
-	public String getLocalPath() {
+	public String getPath() {
 		return mPath;
 	}
 
-	public void setLocalPath(String path) {
+	public void setPath(String path) {
 		this.mPath = path;
 	}
 
-	public String getLocalInfoBegining() {
+	public String getInfoBegining() {
 		return mInfoBegining;
 	}
 
-	public void setLocalInfoBegining(String infoBegining) {
+	public void setInfoBegining(String infoBegining) {
 		this.mInfoBegining = infoBegining;
 	}
 
-	public String getLocalInfoEnd() {
+	public String getInfoEnd() {
 		return mInfoEnd;
 	}
 
-	public void setLocalInfoEnd(String infoEnd) {
+	public void setInfoEnd(String infoEnd) {
 		this.mInfoEnd = infoEnd;
 	}
 
-	public long getLocalTimeStamp() {
+	public long getTimeStamp() {
 		return mTimeStamp;
 	}
 
-	public void setLocalTimeStamp(long timeStamp) {
+	public void setTimeStamp(long timeStamp) {
 		this.mTimeStamp = timeStamp;
 	}
 
@@ -123,25 +123,25 @@ public class LogMessage implements Parcelable {
 	public String toString() {
 		String line = "";
 
-		Date timeStamp = new Date(getLocalTimeStamp());
+		Date timeStamp = new Date(getTimeStamp());
 
 		line = line + "[" + timeStamp.toGMTString() + "]";
 
-		String begining = getLocalInfoBegining();
+		String begining = getInfoBegining();
 
 		if (begining != null && begining.length() > 0) {
 			line = line + " [" + begining + "] ";
 		}
 
-		if (getLocalIp() != null && getLocalIp().length() > 0) {
-			line = line + " " + getLocalIp();
+		if (getIp() != null && getIp().length() > 0) {
+			line = line + " " + getIp();
 		}
 
-		if (getLocalPath() != null && getLocalPath().length() > 0) {
-			line = line + " \"" + getLocalPath() + "\"";
+		if (getPath() != null && getPath().length() > 0) {
+			line = line + " \"" + getPath() + "\"";
 		}
 
-		String end = getLocalInfoEnd();
+		String end = getInfoEnd();
 
 		if (end != null && end.length() > 0) {
 			line = line + " -- " + end + "";
