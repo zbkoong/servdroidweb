@@ -7,10 +7,10 @@ If you have an application which needs to manage a web server you can use the Se
 
 This wiki shows how to bind the ServDroid.web service from your code.
 
-Note that this is only possible for the ServDroid v0.2.3 and above.
+Note that this is only possible for the ServDroid v0.2.4 and above.
 
 = How to=
-You can download the source code of a simple example [http://code.google.com/p/servdroidweb/downloads/detail?name=ServDroidServiceConnectionExample_v0.2.3.zip here]
+You can download the source code of a simple example [https://code.google.com/p/servdroidweb/downloads/detail?name=ServDroidServiceConnectionExample.zip here]
 
 First you need to copy the following files to your project:
 
