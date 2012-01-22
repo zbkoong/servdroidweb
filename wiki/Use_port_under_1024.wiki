@@ -1,4 +1,4 @@
-#summary How to run ServDroid.web (v0.2.x) under port 1024.
+#summary How to run ServDroid.web (v0.2 and above) under port 1024.
 #labels Featured
 
 = Introduction =
