@@ -1,5 +1,5 @@
 #summary How to your own application can manage ServDroid.web from code
-#labels Phase-Implementation
+#labels Phase-Implementation,Featured
 
 = Introduction =
 
@@ -200,4 +200,3 @@ long addLog(in LogMessage msg);
  */
 List<LogMessage> getLogList(in int numRows);
 }}}
-
