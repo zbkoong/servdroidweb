@@ -30,7 +30,7 @@ public class AutoStartReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		AccessPreferences.setContext(context);
-		//Log.d(TAG, " " + intent.getAction());
+		// Log.d(TAG, " " + intent.getAction());
 		if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 			if (!AccessPreferences.isAutostartBootEnabled()) {
 				return;
@@ -65,7 +65,6 @@ public class AutoStartReceiver extends BroadcastReceiver {
 		ServerService.notifySystemBoot();
 		Intent serviceIntent = new Intent(
 				"org.servDroid.server.service.ServiceController");
-
 		context.startService(serviceIntent);
 	}
 }

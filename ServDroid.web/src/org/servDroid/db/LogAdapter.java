@@ -32,21 +32,22 @@ import android.database.Cursor;
 public class LogAdapter extends ServdroidDbAdapter {
 
 	private static LogAdapter _instance;
+
 	private LogAdapter(Context ctx) {
 		super(ctx);
 		if (mDbHelper == null | mDb == null) {
 			open();
 		}
 	}
-	public static LogAdapter initializeInstance(Context ctx){
-		if (null == _instance){
+
+	public static LogAdapter initializeInstance(Context ctx) {
+		if (null == _instance) {
 			_instance = new LogAdapter(ctx);
 		}
 		return _instance;
 	}
-	
-	
-	public static LogAdapter getInstance(){
+
+	public static LogAdapter getInstance() {
 		return _instance;
 	}
 
@@ -65,8 +66,8 @@ public class LogAdapter extends ServdroidDbAdapter {
 	 *            Additional information to append at the end
 	 * @return rowId or -1 if failed
 	 */
-	public synchronized long addLog(String ip, String path, String infoBeginning,
-			String infoEnd) {
+	public synchronized long addLog(String ip, String path,
+			String infoBeginning, String infoEnd) {
 
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(KEY_HOSTS, ip);
@@ -78,7 +79,7 @@ public class LogAdapter extends ServdroidDbAdapter {
 
 		return mDb.insert(DATABASE_LOG_TABLE_, null, initialValues);
 	}
-	
+
 	/**
 	 * Create a new log entry using the the IP, request path, some extra
 	 * information. If the log is added successfully return the new rowId for
@@ -86,11 +87,12 @@ public class LogAdapter extends ServdroidDbAdapter {
 	 * 
 	 * @param msg
 	 *            The message to be stored in the log
-	
+	 * 
 	 * @return rowId or -1 if failed
 	 */
 	public synchronized long addLog(LogMessage msg) {
-		return addLog(msg.getLocalIp(), msg.getLocalPath(), msg.getLocalInfoBegining(), msg.getLocalInfoEnd());
+		return addLog(msg.getIp(), msg.getPath(), msg.getInfoBegining(),
+				msg.getInfoEnd());
 	}
 
 	/**
@@ -138,6 +140,9 @@ public class LogAdapter extends ServdroidDbAdapter {
 	 * @return ArrayList with the log entries
 	 */
 	public List<LogMessage> fetchLogList(int numRows) {
+		if (numRows < 0) {
+			return null;
+		}
 		Cursor c = fetchLog(numRows);
 
 		c.moveToFirst();
@@ -154,11 +159,11 @@ public class LogAdapter extends ServdroidDbAdapter {
 
 		for (int i = 0; i < counts; i++) {
 			log = new LogMessage();
-			log.setLocalIp(c.getString(indexIp));
-			log.setLocalPath(c.getString(indexPath));
-			log.setLocalTimeStamp(c.getLong(indexTimeStamp));
-			log.setLocalInfoBegining(c.getString(indexInfoBegining));
-			log.setLocalInfoEnd(c.getString(indexInfoEnd));
+			log.setIp(c.getString(indexIp));
+			log.setPath(c.getString(indexPath));
+			log.setTimeStamp(c.getLong(indexTimeStamp));
+			log.setInfoBegining(c.getString(indexInfoBegining));
+			log.setInfoEnd(c.getString(indexInfoEnd));
 			locals.add(log);
 			c.moveToNext();
 		}
@@ -167,9 +172,9 @@ public class LogAdapter extends ServdroidDbAdapter {
 	}
 
 	/**
-	 * Create a new log entry using the IP provided. If the log entry is
-	 * created successfully return the new rowId for that log entry, otherwise
-	 * return a -1 to indicate failure.
+	 * Create a new log entry using the IP provided. If the log entry is created
+	 * successfully return the new rowId for that log entry, otherwise return a
+	 * -1 to indicate failure.
 	 * 
 	 * @param ip
 	 *            the IP of the request
@@ -208,15 +213,11 @@ public class LogAdapter extends ServdroidDbAdapter {
 		Date timeStamp;
 
 		String line = "";
-		line = line
-				+ c.getString(c.getColumnIndexOrThrow(KEY_HOSTS))
-				+ " ";
-		timeStamp = new Date(c.getLong(c
-				.getColumnIndexOrThrow(KEY_TIME)));
+		line = line + c.getString(c.getColumnIndexOrThrow(KEY_HOSTS)) + " ";
+		timeStamp = new Date(c.getLong(c.getColumnIndexOrThrow(KEY_TIME)));
 		line = line + "[" + timeStamp.toGMTString() + "] ";
 
-		line = line + "\""
-				+ c.getString(c.getColumnIndexOrThrow(KEY_PATH))
+		line = line + "\"" + c.getString(c.getColumnIndexOrThrow(KEY_PATH))
 				+ "\"";
 
 		c.close();

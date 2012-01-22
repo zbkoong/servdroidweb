@@ -165,8 +165,7 @@ public class ServDroid extends ListActivity {
 		mServiceIntent = new Intent(
 				"org.servDroid.server.service.ServiceController");
 		startService(mServiceIntent);
-		bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE); // 4
-		// }
+		bindService(mServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	private void doUnbindServiceConnection() {
@@ -578,7 +577,7 @@ public class ServDroid extends ListActivity {
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
-		//fillData(true);
+		// fillData(true);
 	}
 
 	/**
@@ -709,11 +708,14 @@ public class ServDroid extends ListActivity {
 			mServiceBinded = true;
 
 			try {
-				if (mServiceController.getStatus() == ServerService.STATUS_RUNNING) {
+				switch (mServiceController.getStatus()) {
+				case ServerService.STATUS_RUNNING:
 					startRefreshThread();
 					setStartedStatus();
-				} else {
+					break;
+				default:
 					setStoppedStatus();
+					break;
 				}
 			} catch (RemoteException e) {
 				e.printStackTrace();

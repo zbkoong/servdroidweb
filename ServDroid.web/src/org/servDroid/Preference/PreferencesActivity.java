@@ -200,6 +200,7 @@ public class PreferencesActivity extends PreferenceActivity {
 							boolean value = ((Boolean) newValue).booleanValue();
 							if (value) {
 								mPreferenceAutostartBoot.setEnabled(false);
+								mPreferenceAutostopWifi.setEnabled(true);
 							} else {
 								mPreferenceAutostartBoot.setEnabled(true);
 								// mPreferenceAutostopWifi.setChecked(false);
@@ -218,7 +219,6 @@ public class PreferencesActivity extends PreferenceActivity {
 							boolean value = ((Boolean) newValue).booleanValue();
 							if (value) {
 								mPreferenceAutostartWifi.setEnabled(false);
-								mPreferenceAutostopWifi.setEnabled(false);
 								mPreferenceAutostopWifi.setEnabled(false);
 							} else {
 								mPreferenceAutostartWifi.setEnabled(true);

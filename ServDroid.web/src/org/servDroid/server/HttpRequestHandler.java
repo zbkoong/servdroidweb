@@ -258,7 +258,7 @@ public class HttpRequestHandler implements Runnable {
 					}
 
 				} else if (isDirectory && !fileExists
-						&& ServerService.getServerParams().getFileIndexing()) { // Indexing
+						&& ServerService.getServerParams().isFileIndexing()) { // Indexing
 
 					statusLine = "200 OK";
 					responseHeader.put("Content-type:", "text/html");

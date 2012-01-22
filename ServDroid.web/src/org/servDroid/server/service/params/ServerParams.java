@@ -21,15 +21,15 @@ import android.os.Parcelable;
 public class ServerParams implements Parcelable {
 
 	private String _wwwPath, _errorPath;
-	private int _cacheTime, _port, _maxClients;
+	private int _cacheTime, _maxClients, _port;
 	private boolean _fileIndexing;
 
 	/**
 	 * Define the parameters needed to start the web server
 	 * @param wwwPath
 	 * @param errorPath
-	 * @param cacheTime
-	 * @param fileIndexing
+	 * @param cacheTime After how many minutes a page will expire in the browser cache
+	 * @param fileIndexing If the file indexing is enabled.
 	 * @param port
 	 * @param maxClients
 	 */
@@ -39,15 +39,13 @@ public class ServerParams implements Parcelable {
 		_errorPath = errorPath;
 		_cacheTime = cacheTime;
 		_fileIndexing = fileIndexing;
-		_port = port;
 		_maxClients = maxClients;
-
+		_port = port;
 	}
 
 	public ServerParams(Parcel in) {
 		_errorPath = in.readString();
 		_wwwPath = in.readString();
-		_cacheTime = in.readInt();
 		_cacheTime = in.readInt();
 		boolean[] ba = new boolean[1];
 		in.readBooleanArray(ba);
@@ -68,13 +66,6 @@ public class ServerParams implements Parcelable {
 		}
 
 	};
-
-	/**
-	 * Using this cosntructor it is posible to stop the server
-	 */
-	public ServerParams() {
-
-	}
 
 	/**
 	 * Get the www path where the HTML documents are stored.
@@ -108,7 +99,7 @@ public class ServerParams implements Parcelable {
 	 * 
 	 * @return true if the file indexing is enabled, false otherwise.
 	 */
-	public boolean getFileIndexing() {
+	public boolean isFileIndexing() {
 		return _fileIndexing;
 	}
 
