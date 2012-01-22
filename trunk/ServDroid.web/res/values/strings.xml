@@ -13,7 +13,7 @@
 	-->
 <resources>
 	<string name="app_name">ServDroid.Web</string>
-	<string name="version">0.2.3</string>
+	<string name="version">0.2.4</string>
 
 
 	<string name="text_start">Start</string>
@@ -172,6 +172,7 @@
 
 	<string name="release_notes">Release notes</string>
 	<string name="release_notes_info">Changes:\n\n
+		-0.2.4 Bug fixing\n
 	    -0.2.3 Bug fixing\n
 	    -0.2 Autostart options, automatic use of the superuser, bug fixing, Improved web 
 	    engine and other applications can connect the web server service (see wiki)\n
