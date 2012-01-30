@@ -18,8 +18,8 @@ package org.servDroid;
 
 import java.util.List;
 
-import org.servDroid.Preference.AccessPreferences;
-import org.servDroid.Preference.PreferencesActivity;
+import org.servDroid.preference.AccessPreferences;
+import org.servDroid.preference.PreferencesActivity;
 import org.servDroid.db.LogMessage;
 import org.servDroid.db.ServdroidDbAdapter;
 import org.servDroid.server.service.ServerService;

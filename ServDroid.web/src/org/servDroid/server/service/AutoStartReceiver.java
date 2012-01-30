@@ -15,7 +15,7 @@
  */
 package org.servDroid.server.service;
 
-import org.servDroid.Preference.AccessPreferences;
+import org.servDroid.preference.AccessPreferences;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
