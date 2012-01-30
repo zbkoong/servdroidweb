@@ -1,6 +1,6 @@
 package org.servDroid.web;
 
-import org.servDroid.Preference.AccessPreferences;
+import org.servDroid.preference.AccessPreferences;
 
 import com.google.ads.AdRequest;
 import com.google.ads.AdSize;

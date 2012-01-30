@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.servDroid.Preference.AccessPreferences;
+import org.servDroid.preference.AccessPreferences;
 import org.servDroid.db.LogAdapter;
 import org.servDroid.db.LogMessage;
 import org.servDroid.db.ServdroidDbAdapter;
