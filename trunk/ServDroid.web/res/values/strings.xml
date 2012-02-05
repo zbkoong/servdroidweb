@@ -172,6 +172,7 @@
 
 	<string name="release_notes">Release notes</string>
 	<string name="release_notes_info">Changes:\n\n
+	    -0.2.5 Bug fixing\n
 		-0.2.4 Bug fixing\n
 	    -0.2.3 Bug fixing\n
 	    -0.2 Autostart options, automatic use of the superuser, bug fixing, Improved web 
