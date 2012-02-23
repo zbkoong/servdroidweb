@@ -22,9 +22,9 @@
 	<string name="default_expiration_cache">60</string><!-- minutes -->
 	<string name="default_vibrate">false</string>
 	<string name="default_directory_indexing">true</string>
-	<string name="default_www_path">/servdroid/var/www/</string>
-	<string name="default_error_path">/servdroid/var/www/error/</string>
-	<string name="default_log_path">/servdroid/var/log/</string>
+	<string name="default_www_path">/serverry/var/www/</string>
+	<string name="default_error_path">/serverry/var/www/error/</string>
+	<string name="default_log_path">/serverry/var/log/</string>
 	<!-- v0.2 -->
 	<string name="default_show_notification">true</string>
 	<string name="default_autostart">false</string>
