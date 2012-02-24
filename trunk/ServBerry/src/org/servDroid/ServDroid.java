@@ -398,13 +398,13 @@ public class ServDroid extends ListActivity {
 								openWebBrowser("http://code.google.com/p/servdroidweb/");
 							}
 						})
-				.setNegativeButton(R.string.donate,
+				/*.setNegativeButton(R.string.donate,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 
 								ShowDonateDialog(false);
 							}
-						})
+						})*/
 				.setNeutralButton(android.R.string.ok,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
