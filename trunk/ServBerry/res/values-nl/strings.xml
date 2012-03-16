@@ -131,7 +131,7 @@
 		je het zeker?</string>
 
 	<string name="about">Over de applicatie </string>
-	<string name="other_about">Over ServBerry</string>
+	<string name="other_about">Over ServMart</string>
 
 	<!--  V 0.1.3  -->
 
@@ -157,8 +157,8 @@
 	</string>
 	<string name="error_finish_downloading_extracting">Er was een fout bij het downloaden en installeren
 		van de template, probeer
-		het handmatig in de pagina van ServBerry
-		(http://beyondar.com/servberry.php).\n\nNaar de website?</string>
+		het handmatig in de pagina van ServMart
+		(http://beyondar.com/ServMart.php).\n\nNaar de website?</string>
 	<string name="error">Fout</string>
 	<string name="web_page">Website</string>
 
@@ -175,7 +175,7 @@
 		multimedia.png.
     </string>
 
-	<string name="info_dialog_7">Je kunt een template vinden in: http://beyondar.com/servberry.php
+	<string name="info_dialog_7">Je kunt een template vinden in: http://beyondar.com/ServMart.php
     </string>
 
 	<string name="release_notes">Uitgave opmerkingen</string>
@@ -200,16 +200,16 @@
   <string name="settings_show_ads">Laat advertenties zien</string>
   <string name="settings_show_ads_text">Bepaal het advertentie gedrag</string>
   <string name="about_servdroid.web">
-	    ServBerry is een BlackBerry static web server. Dit is een open source project.\n\n
-		ServBerry is ontwikkeld door Joan Puig Sanz.
-		\n\nMeer informatie op http://beyondar.com/servberry.php
+	    ServMart is een BlackBerry static web server. Dit is een open source project.\n\n
+		ServMart is ontwikkeld door Joan Puig Sanz.
+		\n\nMeer informatie op http://beyondar.com/ServMart.php
 		\n\nBedankt:
 		voor vertalen: Steve Watts, Kim Del Rio, Asgeir Oskarsson, Enrico Orsini, Jan Dunkerbeck, 
 		Francesca Fontana, Pierre Ducoudray, Gianluca Tranchedone, Marc Abbink en Alfred Ferrer.
 		\n\nOverweeg alstublieft om een donatie over te maken.</string>
   <string name="donate_info">
       Omdat dit project een open source project is, worden er geen inkomsten/winst gegenereerd om nieuwe features te intregreren of bugs te fixen.\n\n
-      Als ServBerry je goed helpt in je project, dan zouden wij het erg waarderen als u wat zou willen doneren.\n\n
+      Als ServMart je goed helpt in je project, dan zouden wij het erg waarderen als u wat zou willen doneren.\n\n
       Thank you!</string>
   <string name="thanks_you">Thank you!</string>
 </resources>
