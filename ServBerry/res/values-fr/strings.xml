@@ -134,7 +134,7 @@
 		défaut</string>
 
 	<string name="about">A propos de l’application</string>
-	<string name="other_about">A propos du ServBerry</string>
+	<string name="other_about">A propos du ServMart</string>
 
 
 
@@ -161,7 +161,7 @@
     </string>
 	<string name="error_finish_downloading_extracting">Erreur lors du téléchargement et l\'installation du
 		modèle, tester manuellement sur la page ServDropid.Web
-		(http://beyondar.com/servberry.php).\n\n¿Visitez le site web?
+		(http://beyondar.com/ServMart.php).\n\n¿Visitez le site web?
 	</string>
 	<string name="error">Erreur</string>
 	<string name="web_page">Page web</string>
@@ -170,7 +170,7 @@
 
 	<string name="info_dialog_7">Vous pouvez trouver un modèle sur
 
-		http://beyondar.com/servberry.php
+		http://beyondar.com/ServMart.php
     </string>
 
 	<string name="release_notes">Notes de publication</string>
@@ -197,16 +197,16 @@
   <string name="settings_show_ads">Afficher les publicités</string>
   <string name="settings_show_ads_text">Régler le comportement des publicités</string>
   <string name="about_servdroid.web">
-        ServBerry est un serveur web statique pour BlackBerry.\n\n C’est un projet open source.
-        ServBerry a été développé par Joan Puig Sanz.
-        \n\nInformations complémentaires au http://beyondar.com/servberry.php
+        ServMart est un serveur web statique pour BlackBerry.\n\n C’est un projet open source.
+        ServMart a été développé par Joan Puig Sanz.
+        \n\nInformations complémentaires au http://beyondar.com/ServMart.php
         \n\nNos remerciements à Steve Watts, Kim Del Rio, Asgeir Oskarsson, Enrico Orsini, Jan Dunkerbeck,
         Francesca Fontana, Pierre Ducoudray, Gianluca Tranchedone, Tatiana Marechale et Alfred Ferrer pour la traduction.
         \n\nPensez à faire une donation
 </string>
   <string name="donate_info">
       Comme ce projet est un projet open source, il ne génère aucun revenu pour financer des ameliorations \n\n
-      Si ServBerry vous plait, ça serait gentil de votre part de soutenir notre projet par une donation\n\n
+      Si ServMart vous plait, ça serait gentil de votre part de soutenir notre projet par une donation\n\n
       Merci!</string>
   <string name="thanks_you">Merci!</string>
 
