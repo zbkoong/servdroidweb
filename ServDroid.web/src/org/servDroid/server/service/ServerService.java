@@ -112,7 +112,7 @@ public class ServerService extends Service implements ServerValues {
 	};
 
 	public static void notifySystemBoot() {
-		// Log.d(TAG, "  ========== Autostart seted!");
+		// Log.d(TAG, "  ========== Autostart!");
 		if (mAutostartOnBoot == 0) {
 			mAutostartOnBoot = 1;
 		}
