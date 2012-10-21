@@ -54,7 +54,7 @@ public class HttpRequestHandler implements Runnable {
 	private static final String TAG = "ServDroid";
 
 	private String mServerVersion = null;
-	
+
 	final static String CRLF = "\r\n";
 
 	private Socket mSocket;
@@ -83,29 +83,33 @@ public class HttpRequestHandler implements Runnable {
 	/**
 	 * Create the object to manage the request;
 	 * 
-	 * @param socket The socket were the connection is.
-	 * @param serverVersion The server version. This version will be printed in the 
-	 * 		auto generated files (like file indexing)
+	 * @param socket
+	 *            The socket were the connection is.
+	 * @param serverVersion
+	 *            The server version. This version will be printed in the auto
+	 *            generated files (like file indexing)
 	 * @throws Exception
 	 */
-	public HttpRequestHandler(Socket socket, String serverVersion) throws Exception {
+	public HttpRequestHandler(Socket socket, String serverVersion)
+			throws Exception {
 		this.mSocket = socket;
 		this.mOutput = socket.getOutputStream();
 		this.mBr = new BufferedReader(new InputStreamReader(
 				socket.getInputStream()), 2 * 1024);
 		this.mServerVersion = serverVersion;
-		
-		if (null == mServerVersion){
+
+		if (null == mServerVersion) {
 			mServerVersion = "";
-		}else{
+		} else {
 			mServerVersion = "v" + mServerVersion;
 		}
 	}
-	
+
 	/**
 	 * Create the object to manage the request;
 	 * 
-	 * @param socket The socket were the connection is.
+	 * @param socket
+	 *            The socket were the connection is.
 	 * @throws Exception
 	 */
 	public HttpRequestHandler(Socket socket) throws Exception {
@@ -145,8 +149,8 @@ public class HttpRequestHandler implements Runnable {
 			StringTokenizer s = new StringTokenizer(httpRequest);
 			String httpCommand = s.nextToken();
 			String fileGet = URLDecoder.decode(s.nextToken());
-			String fileName = URLDecoder.decode(ServerService
-					.getServerParams().getWwwPath() + fileGet);
+			String fileName = URLDecoder.decode(ServerService.getServerParams()
+					.getWwwPath() + fileGet);
 
 			// Analyze all HTTP-Request-Headers
 			while (true) {
@@ -263,7 +267,8 @@ public class HttpRequestHandler implements Runnable {
 					statusLine = "200 OK";
 					responseHeader.put("Content-type:", "text/html");
 
-					entityBody = FileIndexing.getIndexing(fileName, fileGet, mServerVersion);
+					entityBody = FileIndexing.getIndexing(fileName, fileGet,
+							mServerVersion);
 
 					info = "File Indexig";
 
@@ -320,13 +325,21 @@ public class HttpRequestHandler implements Runnable {
 		// Send the status line.
 		mOutput.write(("HTTP/1.0 " + statusLine + CRLF).getBytes());
 
-		if (error != null) {
+		if (error != null && fis == null) {
 
-			entityBody = "<HTML>" + "<HEAD><title>" + statusLine + "</title>"
-					+ "</head><body>" + "<h1>" + statusLine + "</h1>" + "<p>"
-					+ error + "</p>" + "<hr><ADDRESS><a href=\"http://code.google.com/p/servdroidweb/\">ServDroid.web " 
-					+ mServerVersion + "</a></ADDRESS>"
-					+ "</BODY></HTML>";
+			entityBody = "<HTML>"
+					+ "<HEAD><title>"
+					+ statusLine
+					+ "</title>"
+					+ "</head><body>"
+					+ "<h1>"
+					+ statusLine
+					+ "</h1>"
+					+ "<p>"
+					+ error
+					+ "</p>"
+					+ "<hr><ADDRESS><a href=\"http://code.google.com/p/servdroidweb/\">ServDroid.web "
+					+ mServerVersion + "</a></ADDRESS>" + "</BODY></HTML>";
 		}
 
 		// lets try to find out the content-length.
@@ -334,8 +347,11 @@ public class HttpRequestHandler implements Runnable {
 			responseHeader.put("Content-Length:",
 					new Integer(entityBody.getBytes().length).toString());
 		} else if (fis != null) {
-			responseHeader.put("Content-Length:",
-					new Integer(fis.available()).toString());
+			int lenght = fis.available();
+			if (lenght > 0) {
+				responseHeader.put("Content-Length:",
+						new Integer(lenght).toString());
+			}
 		}
 
 		// Output all response headers

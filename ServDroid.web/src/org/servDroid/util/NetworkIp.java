@@ -20,10 +20,13 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.text.format.Formatter;
 
 /**
  * 
@@ -58,13 +61,25 @@ public class NetworkIp {
 	 * @param wifiManager
 	 * @return wifi IP
 	 */
-	public String getWifiIp(WifiManager wifiManager) {
+	public static String getWifiIp(WifiManager wifiManager) {
 		// WifiManager wifiManager = (WifiManager)
 		// getSystemService(Context.WIFI_SERVICE);
 
-		int ip = wifiManager.getConnectionInfo().getIpAddress();
-		return (ip & 0xFF) + "." + ((ip >> 8) & 0xFF) + "."
-				+ ((ip >> 16) & 0xFF) + "." + ((ip >> 24) & 0xFF);
+//		int ip = wifiManager.getConnectionInfo().getIpAddress();
+//		return (ip & 0xFF) + "." + ((ip >> 8) & 0xFF) + "."
+//				+ ((ip >> 16) & 0xFF) + "." + ((ip >> 24) & 0xFF);
+		
+		List<WifiConfiguration> l =  wifiManager.getConfiguredNetworks(); 
+		
+		
+		if(l.size() > 0){
+			WifiConfiguration wc = l.get(0); 
+			return Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
+		}
+		
+		return getLocalIpAddress();
+		
+		
 	}
 	
 	/**
@@ -80,7 +95,7 @@ public class NetworkIp {
 				for (Enumeration<InetAddress> enumIpAddr = intf
 						.getInetAddresses(); enumIpAddr.hasMoreElements();) {
 					InetAddress inetAddress = enumIpAddr.nextElement();
-					if (!inetAddress.isLoopbackAddress()) {
+					if (!inetAddress.isLoopbackAddress() /* && (inetAddress instanceof Inet4Address)*/) {
 						return inetAddress.getHostAddress().toString();
 					}
 				}

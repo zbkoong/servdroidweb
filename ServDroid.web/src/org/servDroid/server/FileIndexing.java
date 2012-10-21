@@ -22,6 +22,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import org.servDroid.util.Encoding;
 
@@ -32,9 +33,9 @@ public class FileIndexing {
 	/**
 	 * Get the file indexing document for an specific folder
 	 * 
-	 * @param path_
+	 * @param path
 	 *            The www path
-	 * @param fileGet_
+	 * @param fileGet
 	 *            The path to indexing
 	 * @return File indexing document
 	 */
@@ -84,7 +85,7 @@ public class FileIndexing {
 					+ "</td><td>-</td></tr>";
 
 		}
-		Arrays.sort(files);
+		sortFiles(files);
 		for (int i = 0, n = files.length; i < n; i++) {
 
 			if (fileGet.endsWith("/")) {
@@ -253,5 +254,18 @@ public class FileIndexing {
 		return numberFormat.format((lengthBytes / (Math.pow(1024, cont))))
 				+ size;
 	}
+	
+	private static void sortFiles(File[] files) {
+	Arrays.sort(files, new Comparator<File>() {
+		@Override
+		public int compare(File s1, File s2) {
+
+			String file1 = s1.getName().toLowerCase();
+			String file2 = s2.getName().toLowerCase();
+
+			return file1.compareTo(file2);
+		}
+	});
+}
 
 }

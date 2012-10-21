@@ -260,7 +260,6 @@ public class ServDroid extends ListActivity {
 						}
 						mTexStat.setText(R.string.text_starting);
 						if (startWebServer()) {
-
 							setStartedStatus();
 						} else {
 							setStoppedStatus();
@@ -286,7 +285,11 @@ public class ServDroid extends ListActivity {
 
 	private void setStartedStatus() {
 		mStartStopButton.setChecked(true);
-		mTexServerInfo.setText("IP: " + NetworkIp.getLocalIpAddress() + " "
+
+		WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		String ip = NetworkIp.getWifiIp(wifiManager);
+
+		mTexServerInfo.setText("IP: " + ip + " "
 				+ getResources().getString(R.string.text_port) + ": "
 				+ mportInUse);
 		mTexStat.setText(R.string.text_running);
