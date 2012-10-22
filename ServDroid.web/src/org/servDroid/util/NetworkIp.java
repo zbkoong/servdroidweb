@@ -87,7 +87,7 @@ public class NetworkIp {
 	 * 
 	 * @return The IP of your device
 	 */
-	public static String getLocalIpAddress() {
+	private static String getLocalIpAddress() {
 		try {
 			for (Enumeration<NetworkInterface> en = NetworkInterface
 					.getNetworkInterfaces(); en.hasMoreElements();) {
