@@ -250,10 +250,12 @@ public class ServerService extends Service implements ServerValues {
 
 		Context context = getApplicationContext();
 		CharSequence contentTitle = getResources().getString(R.string.app_name);
+		
+		WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		CharSequence contentText = getResources().getString(
 				R.string.text_running)
 				+ "  IP: "
-				+ NetworkIp.getLocalIpAddress()
+				+ NetworkIp.getWifiIp(wifiManager)
 				+ " "
 				+ getResources().getString(R.string.text_port)
 				+ ": "
