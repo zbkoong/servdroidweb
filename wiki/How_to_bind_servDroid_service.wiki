@@ -9,7 +9,6 @@ This wiki shows how to bind the ServDroid service from your code.
 
 Note that this is only possible for the ServDroid v0.2.4 and above.
 
-The method explained here works also for the ServDroid BlackBerry version (ServMart)
 
 = How to=
 You can download the source code of a simple example [https://code.google.com/p/servdroidweb/downloads/detail?name=ServDroidServiceConnectionExample.zip here]
