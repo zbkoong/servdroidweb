@@ -1,4 +1,4 @@
-#summary How your own application can manage ServDroid/ServMart from code
+#summary How your own application can manage ServDroid from code
 #labels Phase-Implementation,Featured
 
 = Introduction =
